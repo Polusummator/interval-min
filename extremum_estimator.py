@@ -2,6 +2,7 @@ import sympy
 from decimal import Decimal
 
 from mp_exp import set_precision
+from mp_exp.interval_arithmetics import *
 
 from natural_extension import NaturalExtension
 from optimization_methods import ExtremumType
@@ -38,11 +39,11 @@ def get_extremum_estimation(func: str, func_args: dict, extremum_type: str = "mi
     """
 
     set_precision(-precision.as_tuple().exponent + 1)
-#     TODO: Set a number of Taylor's series terms based on precision
+    #     TODO: Set a number of Taylor's series terms based on precision
 
     interval_extension = _parse_extension_type(extension)(_parse_function(func))
     extremum_type = _parse_extremum_type(extremum_type)
-    method_obj = _parse_method(method)(interval_extension, func_args, precision, extremum_type)
+    method_obj = _parse_method(method)(func_args, interval_extension, precision, extremum_type)
     return method_obj.calculate()
 
 
@@ -69,9 +70,7 @@ def _parse_function(func: str):
     return expr
 
 
-
-
-
-
-
-
+if __name__ == '__main__':
+    f = "x**2 + 1"
+    res = get_extremum_estimation(f, {sympy.Symbol("x"): Interval(Decimal(-2), Decimal(100))}, "min")
+    print(res)
