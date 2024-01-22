@@ -1,4 +1,5 @@
 import sympy
+from decimal import Decimal
 
 from mp_exp import set_precision
 
@@ -12,7 +13,7 @@ EXTREMUM_TYPES = {"max": ExtremumType.MAX, "min": ExtremumType.MIN}
 
 
 def get_extremum_estimation(func: str, func_args: dict, extremum_type: str = "min",
-                            precision: int = 10, extension: str = "natural",
+                            precision: Decimal = Decimal("0.000001"), extension: str = "natural",
                             method: str = "moore_skelboe"):
     """Estimates interval for a given function with a given precision
 
@@ -36,7 +37,7 @@ def get_extremum_estimation(func: str, func_args: dict, extremum_type: str = "mi
     point where maximum/minimum is reached
     """
 
-    set_precision(precision)
+    set_precision(-precision.as_tuple().exponent + 1)
 #     TODO: Set a number of Taylor's series terms based on precision
 
     interval_extension = _parse_extension_type(extension)(_parse_function(func))
