@@ -1,7 +1,7 @@
 """This module implements correctly rounded interval functions
 """
 import decimal as dec
-import interval_arithmetics as ia
+import mp_exp.interval_arithmetics as ia
 
 
 # -------------- Factorial function --------
