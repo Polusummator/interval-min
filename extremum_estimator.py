@@ -1,8 +1,7 @@
 import sympy
 from decimal import Decimal
 
-from mp_exp import set_precision
-from mp_exp.interval_arithmetics import *
+from mp_exp import set_precision, Interval
 
 from natural_extension import NaturalExtension
 from optimization_methods import ExtremumType
@@ -68,10 +67,3 @@ def _parse_method(method: str):
 def _parse_function(func: str):
     expr = sympy.parse_expr(func, evaluate=False)
     return expr
-
-
-if __name__ == '__main__':
-    f2 = "(log(x))"
-    f = "x**2 + 1"
-    res = get_extremum_estimation(f2, {"x": Interval(Decimal(-2), Decimal(100))}, "min")
-    print(res)
