@@ -71,6 +71,7 @@ def _parse_function(func: str):
 
 
 if __name__ == '__main__':
+    f2 = "(log(x))"
     f = "x**2 + 1"
-    res = get_extremum_estimation(f, {sympy.Symbol("x"): Interval(Decimal(-2), Decimal(100))}, "min")
+    res = get_extremum_estimation(f2, {sympy.Symbol("x"): Interval(Decimal(-2), Decimal(100))}, "min")
     print(res)
