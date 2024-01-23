@@ -146,7 +146,16 @@ class Interval:
         return Interval(a, b)
         
     def __pow__(self, other):
-        if isinstance(other, int) and other > c_zero:
+        if isinstance(other, int) != 0:
+            if other == 0:
+                return convert_to_interval(1)
+            if other < 0:
+                # TODO: add handling for intervals containing zero
+                inverse = convert_to_interval(1) / self
+                self.a = inverse.a
+                self.b = inverse.b
+                other *= -1
+
             _set_rounding_mode_floor()
             if other % 2 == 0:
                 if self.a <= c_zero and self.b >= c_zero:
@@ -170,7 +179,7 @@ class Interval:
                 b = self.b ** other                   
             return Interval(a, b)
         else:
-            raise TypeError("Power must be a positive integer")
+            raise TypeError("Power must be an integer")
         
         
     def __truediv__(self, other):
