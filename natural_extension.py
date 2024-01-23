@@ -1,7 +1,7 @@
 import sympy
 from functools import reduce
 
-from mp_exp import log, exp
+from mp_exp import log, exp, Interval, convert_to_interval
 
 
 def add(a, b):
@@ -23,9 +23,9 @@ class NaturalExtension:
     def evaluate(self, variables):
         return self._rec(self._expr, variables)
 
-    def _rec(self, expr, variables) -> list:
+    def _rec(self, expr, variables) -> Interval:
         if isinstance(expr, sympy.Integer):
-            return [expr]
+            return convert_to_interval(float(expr))
         if isinstance(expr, sympy.Symbol):
             return variables[expr]
         arguments = [self._rec(argument, variables) for argument in expr.args]
@@ -34,7 +34,7 @@ class NaturalExtension:
         if isinstance(expr, sympy.Mul):
             return reduce(mul, arguments)
         if isinstance(expr, sympy.Pow):
-            return pow(*arguments)
+            return pow(arguments[0], int(arguments[1].a))
         if isinstance(expr, sympy.log):
             return log(arguments[0])
         if isinstance(expr, sympy.exp):
