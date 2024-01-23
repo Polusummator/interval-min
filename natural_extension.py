@@ -1,19 +1,8 @@
 import sympy
 from functools import reduce
+import operator
 
 from mp_exp import log, exp, Interval, convert_to_interval
-
-
-def add(a, b):
-    return a + b
-
-
-def mul(a, b):
-    return a * b
-
-
-def pow(a, b):
-    return a ** b
 
 
 class NaturalExtension:
@@ -30,11 +19,11 @@ class NaturalExtension:
             return variables[str(expr)]
         arguments = [self._rec(argument, variables) for argument in expr.args]
         if isinstance(expr, sympy.Add):
-            return reduce(add, arguments)
+            return reduce(operator.add, arguments)
         if isinstance(expr, sympy.Mul):
-            return reduce(mul, arguments)
+            return reduce(operator.mul, arguments)
         if isinstance(expr, sympy.Pow):
-            return pow(arguments[0], int(arguments[1].a))
+            return operator.pow(arguments[0], int(arguments[1].a))
         if isinstance(expr, sympy.log):
             return log(arguments[0])
         if isinstance(expr, sympy.exp):
