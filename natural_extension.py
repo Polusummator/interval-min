@@ -27,7 +27,7 @@ class NaturalExtension:
         if isinstance(expr, sympy.Integer):
             return convert_to_interval(float(expr))
         if isinstance(expr, sympy.Symbol):
-            return variables[expr]
+            return variables[str(expr)]
         arguments = [self._rec(argument, variables) for argument in expr.args]
         if isinstance(expr, sympy.Add):
             return reduce(add, arguments)

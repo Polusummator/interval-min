@@ -13,7 +13,7 @@ EXTENSIONS = {"natural": NaturalExtension}
 EXTREMUM_TYPES = {"max": ExtremumType.MAX, "min": ExtremumType.MIN}
 
 
-def get_extremum_estimation(func: str, func_args: dict, extremum_type: str = "min",
+def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_type: str = "min",
                             precision: Decimal = Decimal("0.000001"), extension: str = "natural",
                             method: str = "moore_skelboe"):
     """Estimates interval for a given function with a given precision
@@ -22,11 +22,11 @@ def get_extremum_estimation(func: str, func_args: dict, extremum_type: str = "mi
     ----------
     func : str
         function to be evaluated
-    func_args : dict
+    func_args : dict[str, Interval]
         A dictionary containing variable strings and corresponding intervals
     extremum_type : str
         Should be one of 'min', 'max'
-    precision : int:
+    precision : int
         The least needed precision
     extension : str
         An interval extension to use for estimation. Should be one of 'natural
@@ -73,5 +73,5 @@ def _parse_function(func: str):
 if __name__ == '__main__':
     f2 = "(log(x))"
     f = "x**2 + 1"
-    res = get_extremum_estimation(f2, {sympy.Symbol("x"): Interval(Decimal(-2), Decimal(100))}, "min")
+    res = get_extremum_estimation(f2, {"x": Interval(Decimal(-2), Decimal(100))}, "min")
     print(res)
