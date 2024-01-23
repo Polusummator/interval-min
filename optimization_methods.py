@@ -9,7 +9,7 @@ class ExtremumType(Enum):
 
 
 class MooreSkelboe:
-    def __init__(self, func_args: dict[str: Interval], interval_extension, precision: dec.Decimal,
+    def __init__(self, func_args: dict[str, Interval], interval_extension, precision: dec.Decimal,
                  extremum_type) -> None:
         self.func_args = func_args
         self.interval_extension = interval_extension
