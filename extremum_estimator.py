@@ -4,7 +4,6 @@ from decimal import Decimal
 from mp_exp import set_precision, Interval
 
 from tree_factory import get_interval_tree
-from natural_extension import NaturalExtension
 from optimization_methods import ExtremumType
 from optimization_methods import MooreSkelboe
 
