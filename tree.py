@@ -1,4 +1,3 @@
-import sympy
 from functools import reduce
 
 
@@ -8,6 +7,14 @@ class VariableNode:
 
     def calculate(self, variables: dict):
         return variables[self.variable_name]
+
+
+class ConstNode:
+    def __init__(self, constant):
+        self.constant = constant
+
+    def calculate(self, variables: dict):
+        return self.constant
 
 
 class UnaryNode:
@@ -25,5 +32,5 @@ class BinaryNode:
         self.arguments = arguments
 
     def calculate(self, variables: dict):
-        arguments = [argument.calculate(variables) for argument in self.arguments()]
+        arguments = [argument.calculate(variables) for argument in self.arguments]
         return reduce(self.func, arguments)
