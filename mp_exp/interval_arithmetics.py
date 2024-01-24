@@ -43,13 +43,13 @@ def set_precision(prec):
     dec.getcontext().prec = prec
     return prev
 
-    
-    
-def _set_rounding_mode(rounding_mode):  
+
+
+def _set_rounding_mode(rounding_mode):
     prev = dec.getcontext().rounding
     dec.getcontext().rounding = rounding_mode
     return prev
-    
+
 def _set_rounding_mode_default():
     return _set_rounding_mode(dec.ROUND_HALF_EVEN)
 
@@ -65,7 +65,7 @@ def _my_mul(a, b):
         return c_zero
     else:
         return a * b
-    
+
 def _my_div(a, b):
     if b.is_infinite():
         if a.is_infinite():
@@ -73,10 +73,10 @@ def _my_div(a, b):
         else:
             return dec.Decimal('0')
     return a / b
-    
+
 class Interval:
     """Class for storing interval values and perform interval operations"""
-    
+
     def _convert_to_interval(other):
         if type(other) == dec.Decimal:
             return Interval(other, other)
@@ -85,9 +85,9 @@ class Interval:
             return Interval(v, v)
         else:
             return other
-        
 
-    def __init__(self, a : dec.Decimal, b : dec.Decimal):
+
+    def __init__(self, a : dec.Decimal | float | int, b : dec.Decimal | float | int):
         """
         Constructor
 
@@ -97,14 +97,15 @@ class Interval:
         b : interval's right end
 
         """
-        if type(a) != dec.Decimal or type(b) != dec.Decimal:
-             raise TypeError("Interval constructor's arguments must be instances of Decimal")
-        self.a = a
-        self.b = b
-        
+        if isinstance(a, (dec.Decimal, float, int)) and isinstance(b, (dec.Decimal, float, int)):
+            self.a = dec.Decimal(a)
+            self.b = dec.Decimal(b)
+        else:
+            raise TypeError("Interval constructor's arguments must be instances of Decimal")
+
 
     def __neg__(self):
-        _set_rounding_mode_floor()        
+        _set_rounding_mode_floor()
         a = -self.b
         _set_rounding_mode_ceil()
         b = -self.a
@@ -112,15 +113,15 @@ class Interval:
 
     def __eq__(self, other):
         return (self.a == other.a) and (self.b == other.b)
-        
+
     def __add__(self, other):
         nother = Interval._convert_to_interval(other)
         _set_rounding_mode_floor()
         a = self.a + nother.a
         _set_rounding_mode_ceil()
-        b = self.b + nother.b        
+        b = self.b + nother.b
         return Interval(a, b)
-    
+
     def __sub__(self, other):
         nother = Interval._convert_to_interval(other)
         _set_rounding_mode_floor()
@@ -128,7 +129,7 @@ class Interval:
         _set_rounding_mode_ceil()
         b = self.b - nother.a
         return Interval(a, b)
-    
+
     def __mul__(self, other):
         nother = Interval._convert_to_interval(other)
         _set_rounding_mode_floor()
@@ -137,14 +138,14 @@ class Interval:
         ba = _my_mul(self.b, nother.a)
         bb = _my_mul(self.b, nother.b)
         a = min(aa, ab, ba, bb)
-        _set_rounding_mode_ceil()        
+        _set_rounding_mode_ceil()
         aa = _my_mul(self.a, nother.a)
         ab = _my_mul(self.a, nother.b)
         ba = _my_mul(self.b, nother.a)
         bb = _my_mul(self.b, nother.b)
         b = max(aa, ab, ba, bb)
         return Interval(a, b)
-        
+
     def __pow__(self, other):
         if isinstance(other, int) != 0:
             if other == 0:
@@ -176,12 +177,12 @@ class Interval:
             else:
                 a = self.a ** other
                 _set_rounding_mode_ceil()
-                b = self.b ** other                   
+                b = self.b ** other
             return Interval(a, b)
         else:
             raise TypeError("Power must be an integer")
-        
-        
+
+
     def __truediv__(self, other):
         nother = Interval._convert_to_interval(other)
         if nother.a == nother.b == c_zero:
@@ -227,31 +228,31 @@ class Interval:
                 _set_rounding_mode_floor()
                 rb = _my_div(self.a, nother.b)
             return [Interval(c_minf, ra), Interval(rb, c_inf)]
-            
-            
-            
-       
-        
-    
+
+
+
+
+
+
     def __radd__(self, other):
         nother = Interval._convert_to_interval(other)
         return nother.__add__(self)
 
-    
+
     def __rsub__(self, other):
         nother = Interval._convert_to_interval(other)
         return nother.__sub__(self)
 
-    
+
     def __rmul__(self, other):
         nother = Interval._convert_to_interval(other)
         return nother.__mul__(self)
-    
-    
+
+
     def __rtruediv__(self, other):
         nother = Interval._convert_to_interval(other)
         return nother.__truediv__(self)
-    
+
     def __repr__(self):
         return "[" + str(self.a) + ", " + str(self.b) + "]"
 
@@ -271,7 +272,7 @@ class Interval:
 #         b = dec.Decimal('0.5') * (self.a + self.b)
 #         return Interval(a, b)
 
-    
+
 # Some utility function for working with intervals
 
 def convert_to_interval(val):
@@ -309,7 +310,7 @@ def mid_interval(ival):
     b = dec.Decimal('0.5') * (ival.a + ival.b)
     return Interval(a, b)
 
-    
+
 def wid(ival):
     """
     Returns the closest outer approximation of the interval's width
@@ -319,8 +320,8 @@ def wid(ival):
     ival : interval
     """
     _set_rounding_mode_ceil()
-    return ival.b - ival.a 
-    
+    return ival.b - ival.a
+
 
 
 def intersect(ival1, ival2):
@@ -342,7 +343,7 @@ def intersect(ival1, ival2):
         a = max(ival1.a, ival2.a)
         b = min(ival1.b, ival2.b)
         return Interval(a, b)
-    
+
 def is_in(x, ival):
     """
     Checks whether point x belongs to the interval ival
@@ -373,8 +374,7 @@ def is_dot_interval(x):
     """
     res = dec.compare(x.a, x.b)
     return True if res == c_zero else False
-    
-    
-    
-    
-    
+
+
+
+
