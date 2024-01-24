@@ -5,7 +5,7 @@ class VariableNode:
     def __init__(self, variable_name):
         self.variable_name = variable_name
 
-    def calculate(self, variables: dict):
+    def evaluate(self, variables: dict):
         return variables[self.variable_name]
 
 
@@ -13,7 +13,7 @@ class ConstNode:
     def __init__(self, constant):
         self.constant = constant
 
-    def calculate(self, variables: dict):
+    def evaluate(self, variables: dict):
         return self.constant
 
 
@@ -22,8 +22,8 @@ class UnaryNode:
         self.func = func
         self.argument = argument
 
-    def calculate(self, variables: dict):
-        return self.func(self.argument.calculate(variables))
+    def evaluate(self, variables: dict):
+        return self.func(self.argument.evaluate(variables))
 
 
 class BinaryNode:
@@ -31,6 +31,6 @@ class BinaryNode:
         self.func = func
         self.arguments = arguments
 
-    def calculate(self, variables: dict):
-        arguments = [argument.calculate(variables) for argument in self.arguments]
+    def evaluate(self, variables: dict):
+        arguments = [argument.evaluate(variables) for argument in self.arguments]
         return reduce(self.func, arguments)
