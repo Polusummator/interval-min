@@ -3,12 +3,12 @@ from decimal import Decimal
 
 from mp_exp import set_precision, Interval
 
-from natural_extension import NaturalExtension
+from tree_factory import get_interval_tree
 from optimization_methods import ExtremumType
 from optimization_methods import MooreSkelboe
 
 METHODS = {"moore_skelboe": MooreSkelboe}
-EXTENSIONS = {"natural": NaturalExtension}
+EXTENSIONS = {"natural": get_interval_tree}
 EXTREMUM_TYPES = {"max": ExtremumType.MAX, "min": ExtremumType.MIN}
 
 
