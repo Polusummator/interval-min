@@ -1,23 +1,17 @@
-from enum import Enum
 from mp_exp.interval_arithmetics import *
 from sortedcontainers import SortedList
 
 
-class ExtremumType(Enum):
-    MAX = 0
-    MIN = 1
-
-
 class MooreSkelboe:
     def __init__(self, func_args: dict[str, Interval], interval_extension, precision: dec.Decimal,
-                 extremum_type) -> None:
+                 extremum_type: str) -> None:
         self.func_args = func_args
         self.interval_extension = interval_extension
         self.precision = precision
         self.extremum_type = extremum_type
 
     def calculate(self):
-        if self.extremum_type == ExtremumType.MIN:
+        if self.extremum_type == "min":
             cells = SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
         else:
             cells = SortedList(key=lambda x: -self.interval_extension.evaluate(x).b)

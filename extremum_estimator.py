@@ -4,12 +4,10 @@ from decimal import Decimal
 from mp_exp import set_precision, Interval
 
 from tree_factory import get_interval_tree
-from optimization_methods import ExtremumType
 from optimization_methods import MooreSkelboe
 
 METHODS = {"moore_skelboe": MooreSkelboe}
 EXTENSIONS = {"natural": get_interval_tree}
-EXTREMUM_TYPES = {"max": ExtremumType.MAX, "min": ExtremumType.MIN}
 
 
 def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_type: str = "min",
@@ -47,9 +45,9 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
     return interval_extension.evaluate(variable_interval).a
 
 
-def _parse_extremum_type(extremum_type: str) -> ExtremumType:
-    if extremum_type in EXTREMUM_TYPES:
-        return EXTREMUM_TYPES[extremum_type]
+def _parse_extremum_type(extremum_type: str) -> str:
+    if extremum_type == "min" or extremum_type == "max":
+        return extremum_type
     raise SyntaxError("Unexpected argument given as an extremum type")
 
 
