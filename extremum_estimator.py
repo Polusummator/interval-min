@@ -14,7 +14,7 @@ EXTREMUM_TYPES = {"max": ExtremumType.MAX, "min": ExtremumType.MIN}
 
 def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_type: str = "min",
                             precision: Decimal = Decimal("0.000001"), extension: str = "natural",
-                            method: str = "moore_skelboe"):
+                            method: str = "moore_skelboe") -> Decimal:
     """Estimates interval for a given function with a given precision
 
     Parameters
@@ -43,7 +43,8 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
     interval_extension = _parse_extension_type(extension)(_parse_function(func))
     extremum_type = _parse_extremum_type(extremum_type)
     method_obj = _parse_method(method)(func_args, interval_extension, precision, extremum_type)
-    return method_obj.calculate()
+    variable_interval = method_obj.calculate()
+    return interval_extension.evaluate(variable_interval).a
 
 
 def _parse_extremum_type(extremum_type: str) -> ExtremumType:
