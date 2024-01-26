@@ -7,7 +7,8 @@ class MooreSkelboe:
                  extremum_type: str) -> None:
         self.func_args = func_args
         self.interval_extension = interval_extension
-        self.precision = precision
+        self.answer_precision = precision
+        self.calculation_precision = precision
         self.extremum_type = extremum_type
 
     def calculate(self):
@@ -16,7 +17,7 @@ class MooreSkelboe:
         else:
             cells = SortedList(key=lambda x: -self.interval_extension.evaluate(x).b)
         cells.add(self.func_args)
-        while wid(self.interval_extension.evaluate(cells[0])) >= self.precision:
+        while wid(self.interval_extension.evaluate(cells[0])) >= self.answer_precision:
             maxwid_variable = 0  # sympy.Symbol actually
             maxwid = 0
             for item in cells[0].items():
