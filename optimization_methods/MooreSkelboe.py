@@ -12,10 +12,7 @@ class MooreSkelboe:
         self.extremum_type = extremum_type
 
     def calculate(self):
-        if self.extremum_type == "min":
-            cells = SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
-        else:
-            cells = SortedList(key=lambda x: -self.interval_extension.evaluate(x).b)
+        cells = self._get_sorted_list(self.extremum_type)
         cells.add(self.func_args)
         while wid(self.interval_extension.evaluate(cells[0])) >= self.answer_precision:
             maxwid_variable = 0  # sympy.Symbol actually
@@ -46,5 +43,10 @@ class MooreSkelboe:
 
     def _set_precision(self, interval):
         if wid(interval) <= self.calculation_precision * 2:
-            mp_exp.set_precision(-self.calculation_precision.as_tuple().exponent + 1)
+            set_precision(-self.calculation_precision.as_tuple().exponent + 1)
             self.calculation_precision /= 10
+
+    def _get_sorted_list(self, extremum_type):
+        if self.extremum_type == "min":
+            return SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
+        return SortedList(key=lambda x: -self.interval_extension.evaluate(x).b)
