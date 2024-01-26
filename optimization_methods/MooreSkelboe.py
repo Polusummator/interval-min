@@ -33,6 +33,7 @@ class MooreSkelboe:
 
     def _split_domain(self, domain: dict[str, Interval], variable: str) -> list[dict]:
         split_interval = domain[variable]
+        self._set_precision(split_interval)
         new_interval_left = Interval(split_interval.a, mid(split_interval))
         new_interval_right = Interval(mid(split_interval), split_interval.b)
 
@@ -42,3 +43,8 @@ class MooreSkelboe:
         right_half[variable] = new_interval_right
 
         return [left_half, right_half]
+
+    def _set_precision(self, interval):
+        if wid(interval) <= self.calculation_precision * 2:
+            mp_exp.set_precision(-self.calculation_precision.as_tuple().exponent + 1)
+            self.calculation_precision /= 10
