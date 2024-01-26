@@ -8,7 +8,7 @@ class MooreSkelboe:
         self.func_args = func_args
         self.interval_extension = interval_extension
         self.answer_precision = precision
-        self.calculation_precision = precision
+        self.calculation_precision = precision + 1
         self.extremum_type = extremum_type
 
     def calculate(self):

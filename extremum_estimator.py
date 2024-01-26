@@ -35,7 +35,7 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
     point where maximum/minimum is reached
     """
 
-    set_precision(-precision.as_tuple().exponent + 2)
+    set_precision(-precision.as_tuple().exponent + 1)
     #     TODO: Set a number of Taylor's series terms based on precision
 
     interval_extension = _parse_extension_type(extension)(_parse_function(func))
