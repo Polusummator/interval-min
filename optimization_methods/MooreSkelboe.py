@@ -8,7 +8,7 @@ class MooreSkelboe:
         self.func_args = func_args
         self.interval_extension = interval_extension
         self.answer_precision = precision
-        self.calculation_precision = precision + 1
+        self.calculation_precision = precision
         self.extremum_type = extremum_type
 
     def calculate(self):
@@ -38,7 +38,7 @@ class MooreSkelboe:
 
     def _set_precision(self, interval: Interval):
         if wid(interval) <= self.calculation_precision * 2:
-            set_precision(-self.calculation_precision.as_tuple().exponent + 1)
+            set_precision(-self.calculation_precision.as_tuple().exponent + 5)
             self.calculation_precision /= 10
 
     def _get_sorted_list(self):
