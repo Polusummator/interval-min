@@ -27,20 +27,33 @@ def factorial(n):
 
 def exp(x: ia.Interval) -> ia.Interval:
     precision = getcontext().prec
-    lower_bound = _precise_exp(x.a, precision, ROUND_DOWN)
-    upper_bound = _precise_exp(x.b, precision, ROUND_UP)
+    lower_bound = _precise_calc(x.a, lambda a: a.exp(), precision, ROUND_DOWN)
+    upper_bound = _precise_calc(x.b, lambda a: a.exp(), precision, ROUND_UP)
 
     return ia.Interval(lower_bound, upper_bound)
 
 
-def _precise_exp(x: Decimal, precision: Decimal, rounding) -> Decimal:
+def log(x: ia.Interval) -> ia.Interval:
+    if x.a <= 0:
+        raise ValueError("Log cannot be applied to an interval containing values less or equal to zero")
+
+    precision = getcontext().prec
+    lower_bound = _precise_calc(x.a, lambda a: a.ln(), precision, ROUND_DOWN)
+    upper_bound = _precise_calc(x.b, lambda a: a.ln(), precision, ROUND_UP)
+
+    return ia.Interval(lower_bound, upper_bound)
+
+
+def _precise_calc(x: Decimal, func, precision: Decimal, rounding) -> Decimal:
     precision_value = Decimal("0." + "0" * (precision - 1) + "1")
     extra = 3
     while True:
         ia.set_precision(precision + extra)
-        estimation = x.exp()
+        estimation = func(x)
         if -estimation.as_tuple().exponent >= precision and estimation % precision_value != 0:
             estimation.quantize(Decimal(precision_value), rounding=rounding)
             ia.set_precision(int(precision))
             return estimation
         extra += 3
+
+
