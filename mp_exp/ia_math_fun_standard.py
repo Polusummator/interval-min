@@ -27,8 +27,8 @@ def factorial(n):
 
 def exp(x: ia.Interval) -> ia.Interval:
     precision = getcontext().prec
-    lower_bound = _precise_calc(x.a, lambda a: a.exp(), precision, ROUND_DOWN)
-    upper_bound = _precise_calc(x.b, lambda a: a.exp(), precision, ROUND_UP)
+    lower_bound = _precise_calc(x.a, lambda a: a.exp(), precision, ROUND_DOWN) if x.a != 0 else 1
+    upper_bound = _precise_calc(x.b, lambda a: a.exp(), precision, ROUND_UP) if x.b != 0 else 1
 
     return ia.Interval(lower_bound, upper_bound)
 
