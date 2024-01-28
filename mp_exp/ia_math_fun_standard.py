@@ -44,7 +44,7 @@ def log(x: ia.Interval) -> ia.Interval:
     return ia.Interval(lower_bound, upper_bound)
 
 
-def _precise_calc(x: Decimal, func, precision: Decimal, rounding) -> Decimal:
+def _precise_calc(x: Decimal, func, precision: int, rounding) -> Decimal:
     precision_value = Decimal("0." + "0" * (precision - 1) + "1")
     extra = 3
     while True:
