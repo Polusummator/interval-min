@@ -14,10 +14,9 @@ class MooreSkelboe:
     def calculate(self):
         cells = self._get_sorted_list()
         cells.add(self.func_args)
-
-        while wid(self.interval_extension.evaluate(cells[0])) >= self.answer_precision:
-            max_wid_variable = self._get_max_wid_variable(cells[0])
-            new_cells = self._split_domain(cells[0], max_wid_variable)
+        while wid(self.interval_extension.evaluate(current_cell := cells[0])) >= self.answer_precision:
+            max_wid_variable = self._get_max_wid_variable(current_cell)
+            new_cells = self._split_domain(current_cell, max_wid_variable)
             cells.pop(0)
             for cell in new_cells:
                 cells.add(cell)
@@ -29,8 +28,8 @@ class MooreSkelboe:
         new_interval_left = Interval(split_interval.a, mid(split_interval))
         new_interval_right = Interval(mid(split_interval), split_interval.b)
 
-        left_half = domain.copy()  # todo: copy?
-        right_half = domain.copy()  # todo: copy?
+        left_half = domain.copy()
+        right_half = domain.copy()
         left_half[variable] = new_interval_left
         right_half[variable] = new_interval_right
 
