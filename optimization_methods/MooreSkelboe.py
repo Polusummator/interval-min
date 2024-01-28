@@ -7,32 +7,49 @@ class MooreSkelboe:
                  extremum_type: str) -> None:
         self.func_args = func_args
         self.interval_extension = interval_extension
-        self.precision = precision
+        self.answer_precision = precision
+        self.calculation_precision = precision
         self.extremum_type = extremum_type
 
     def calculate(self):
-        if self.extremum_type == "min":
-            cells = SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
-        else:
-            cells = SortedList(key=lambda x: -self.interval_extension.evaluate(x).b)
+        cells = self._get_sorted_list()
         cells.add(self.func_args)
-        while wid(self.interval_extension.evaluate(cells[0])) >= self.precision:
-            widmax_variable = 0  # sympy.Symbol actually
-            widmax = 0
-            current_cell = cells[0]
-            for item in current_cell.items():
-                if wid(item[1]) > widmax:
-                    widmax = wid(item[1])
-                    widmax_variable = item[0]
-            widmax_interval = current_cell[widmax_variable]
-            new_cell_left = current_cell.copy()
-            new_cell_right = current_cell.copy()
-            middle = mid(widmax_interval)
-            new_interval_left = Interval(widmax_interval.a, middle)
-            new_interval_right = Interval(middle, widmax_interval.b)
-            new_cell_left[widmax_variable] = new_interval_left
-            new_cell_right[widmax_variable] = new_interval_right
+        while wid(self.interval_extension.evaluate(current_cell := cells[0])) >= self.answer_precision:
+            max_wid_variable = self._get_max_wid_variable(current_cell)
+            new_cells = self._split_domain(current_cell, max_wid_variable)
             cells.pop(0)
-            cells.add(new_cell_left)
-            cells.add(new_cell_right)
+            for cell in new_cells:
+                cells.add(cell)
         return cells[0]
+
+    def _split_domain(self, domain: dict[str, Interval], variable: str) -> list[dict]:
+        split_interval = domain[variable]
+        self._set_precision(split_interval)
+        new_interval_left = Interval(split_interval.a, mid(split_interval))
+        new_interval_right = Interval(mid(split_interval), split_interval.b)
+
+        left_half = domain.copy()
+        right_half = domain.copy()
+        left_half[variable] = new_interval_left
+        right_half[variable] = new_interval_right
+
+        return [left_half, right_half]
+
+    def _set_precision(self, interval: Interval):
+        if wid(interval) <= self.calculation_precision * 2:
+            set_precision(-self.calculation_precision.as_tuple().exponent + 5)
+            self.calculation_precision /= 10
+
+    def _get_sorted_list(self):
+        if self.extremum_type == "min":
+            return SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
+        return SortedList(key=lambda x: -self.interval_extension.evaluate(x).b)
+
+    def _get_max_wid_variable(self, domain: dict[str, Interval]) -> str:
+        max_wid_variable = 0  # sympy.Symbol actually
+        max_wid = 0
+        for item in domain.items():
+            if wid(item[1]) > max_wid:
+                max_wid = wid(item[1])
+                max_wid_variable = item[0]
+        return max_wid_variable
