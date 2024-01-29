@@ -1,3 +1,5 @@
+import decimal
+
 import sympy
 from decimal import Decimal
 
@@ -64,5 +66,5 @@ def _parse_method(method: str):
 
 
 def _parse_function(func: str):
-    expr = sympy.parse_expr(func, evaluate=False)
+    expr = sympy.parse_expr(func, evaluate=True)
     return expr
