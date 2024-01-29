@@ -38,8 +38,8 @@ def log(x: ia.Interval) -> ia.Interval:
         raise ValueError("Log cannot be applied to an interval containing values less or equal to zero")
 
     precision = getcontext().prec
-    lower_bound = _precise_calc(x.a, lambda a: a.ln(), precision, ROUND_DOWN)
-    upper_bound = _precise_calc(x.b, lambda a: a.ln(), precision, ROUND_UP)
+    lower_bound = _precise_calc(x.a, lambda a: a.ln(), precision, ROUND_DOWN) if x.a != 1 else 0
+    upper_bound = _precise_calc(x.b, lambda a: a.ln(), precision, ROUND_UP) if x.b != 1 else 0
 
     return ia.Interval(lower_bound, upper_bound)
 
