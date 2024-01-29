@@ -23,9 +23,9 @@ def _get_tree(expr, elementary_func):
         case sympy.Symbol():
             return VariableNode(str(expr))
         case sympy.Integer():
-            return ConstNode(int(expr))
+            return ConstNode(int(expr), mp_exp.convert_to_interval)
         case sympy.Float():
-            return ConstNode(float(expr))
+            return ConstNode(float(expr), mp_exp.convert_to_interval)
         case sympy.log():
             return UnaryNode(elementary_func.log, arguments[0])
         case sympy.exp():

@@ -10,11 +10,12 @@ class VariableNode:
 
 
 class ConstNode:
-    def __init__(self, constant):
+    def __init__(self, func, constant):
+        self.func = func
         self.constant = constant
 
     def evaluate(self, variables: dict):
-        return self.constant
+        return self.func(self.constant)
 
 
 class UnaryNode:
