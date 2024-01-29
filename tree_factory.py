@@ -30,6 +30,8 @@ def _get_tree(expr, elementary_func):
             return UnaryNode(elementary_func.log, arguments[0])
         case sympy.exp():
             return UnaryNode(elementary_func.exp, arguments[0])
+        case sympy.factorial():
+            return UnaryNode(elementary_func.factorial, arguments[0])
         case sympy.Add():
             func = operator.add
         case sympy.Mul():
@@ -43,6 +45,7 @@ def _get_tree(expr, elementary_func):
 class IntervalElementaryFunc:
     log = mp_exp.log
     exp = mp_exp.exp
+    factorial = mp_exp.factorial
 
 
 def get_interval_tree(expr):
