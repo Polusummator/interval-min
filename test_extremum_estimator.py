@@ -1,7 +1,8 @@
-from decimal import Decimal
-from extremum_estimator import get_extremum_estimation
-import unittest
 import csv
+from decimal import Decimal
+import unittest
+
+from extremum_estimator import get_extremum_estimation
 import mp_exp.interval_arithmetics as ia
 
 
