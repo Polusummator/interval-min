@@ -23,9 +23,9 @@ def _get_tree(expr, elementary_func):
         case sympy.Symbol():
             return VariableNode(str(expr))
         case sympy.Integer():
-            return ConstNode(int(expr), mp_exp.convert_to_interval)
+            return ConstNode(elementary_func.convert_to_interval, int(expr))
         case sympy.Float():
-            return ConstNode(float(expr), mp_exp.convert_to_interval)
+            return ConstNode(elementary_func.convert_to_interval, float(expr))
         case sympy.log():
             return UnaryNode(elementary_func.log, arguments[0])
         case sympy.exp():
@@ -46,6 +46,7 @@ class IntervalElementaryFunc:
     log = mp_exp.log
     exp = mp_exp.exp
     factorial = mp_exp.factorial
+    convert_to_interval = mp_exp.convert_to_interval
 
 
 def get_interval_tree(expr):
