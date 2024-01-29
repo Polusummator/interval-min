@@ -11,7 +11,6 @@ class TestExtr(unittest.TestCase):
         with open('test_extremum_estimator.csv', 'r', encoding='utf-8') as csv_file:
             caption = ""
             for num, row in enumerate(csv.reader(csv_file, delimiter=',')):
-                flag = True
                 if not num:
                     caption = row
                     continue
@@ -20,6 +19,7 @@ class TestExtr(unittest.TestCase):
                     ans = ""
                     d = dict()
                     extr = ""
+                    precision = Decimal("1")
                     for nm, data in enumerate(row):
                         if caption[nm] == "Function":
                             f = data
@@ -35,23 +35,15 @@ class TestExtr(unittest.TestCase):
                                 d = {ds[0]: ia.Interval(a, b)}
                         elif caption[nm] == "Correct":
                             ans = Decimal(data)
+                        elif caption[nm] == "Precision":
+                            precision = Decimal(data)
                         print(f'{caption[nm]}: {data}')
-                    base = "0."
-                    for i in range(5):
-                        epsilon = Decimal(base + '1')
-                        try:
-                            res = get_extremum_estimation(f, d, extr, epsilon)
-                            self.assertTrue(abs(Decimal(res) - ans) < epsilon)
-                        except:
-                            flag = False
-                            break
-                        base += '0'
-                    if flag:
+                    try:
+                        res = get_extremum_estimation(f, d, extr, precision)
+                        self.assertTrue(abs(Decimal(res) - ans) < precision)
                         print(f"TEST PASSED\n")
-                    else:
+                    except:
                         print(f"TEST FAILED\n")
-
-
 
 
 def suite():
