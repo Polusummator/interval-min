@@ -1,5 +1,3 @@
-import decimal
-
 import sympy
 from decimal import Decimal
 
@@ -37,12 +35,18 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
     point where maximum/minimum is reached
     """
 
-    set_precision(-precision.as_tuple().exponent + 5)
+    precision_digits = -precision.as_tuple().exponent + 5
+    set_precision(precision_digits)
     #     TODO: Set a number of Taylor's series terms based on precision
 
-    interval_extension = _parse_extension_type(extension)(_parse_function(func))
+    parsed_function = _parse_function(func)
+    interval_extension = _parse_extension_type(extension)(parsed_function)
     extremum_type = _parse_extremum_type(extremum_type)
     method_obj = _parse_method(method)(func_args, interval_extension, precision, extremum_type)
+
+    if not parsed_function.free_symbols:
+        return Decimal(str(parsed_function.evalf(precision_digits)))
+
     variable_interval = method_obj.calculate()
     return interval_extension.evaluate(variable_interval).a
 
@@ -66,5 +70,5 @@ def _parse_method(method: str):
 
 
 def _parse_function(func: str):
-    expr = sympy.parse_expr(func, evaluate=True)
+    expr = sympy.parse_expr(func, evaluate=False)
     return expr
