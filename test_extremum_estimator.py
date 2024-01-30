@@ -48,8 +48,10 @@ class TestExtr(unittest.TestCase):
         result = get_extremum_estimation(test.func, test.intervals,
                                          test.extremum_type, test.precision,
                                          extension, method)
-        print(f" Result value: {result}")
-        self.assertTrue(abs(test.answer - result) < test.precision)
+        difference = abs(test.answer - result)
+        message = (f"expected: {test.answer}, actual: {result}.\n"
+                   f"difference > precision: {difference} > {test.precision}")
+        self.assertTrue(difference < test.precision, msg=message)
 
 
 def suite():
