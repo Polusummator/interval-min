@@ -24,7 +24,8 @@ TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str)
 
 
 def custom_name_func(testcase_func, param_num, param):
-    return parameterized.to_safe_name("_".join(str(x) for x in param.args))
+    args = param.args
+    return parameterized.to_safe_name("_".join([args[0].name, args[1], args[2]]))
 
 
 def construct_test(row):
@@ -42,10 +43,10 @@ def construct_test(row):
 
 class TestExtr(unittest.TestCase):
 
-    @parameterized.expand(product(TEST_TABLE["Test name"], EXTENSIONS, METHODS), name_func=custom_name_func)
-    def test(self, test_name, extension, method):
-        row = TEST_TABLE[TEST_TABLE["Test name"] == test_name].iloc[0]
-        test = construct_test(row)
+    @parameterized.expand(product([construct_test(row) for index, row in TEST_TABLE.iterrows()],
+                                  EXTENSIONS,
+                                  METHODS), name_func=custom_name_func)
+    def test(self, test, extension, method):
         result = get_extremum_estimation(test.func, test.intervals,
                                          test.extremum_type, test.precision,
                                          extension, method)
