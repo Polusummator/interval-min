@@ -1,82 +1,61 @@
-from decimal import Decimal
-from extremum_estimator import get_extremum_estimation
 import unittest
-import mp_exp.interval_arithmetics as ia
+from dataclasses import dataclass
+from decimal import Decimal
+from itertools import product
+
+import pandas as pd
+from parameterized import parameterized
+
+from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS
+from mp_exp import Interval
+
+
+@dataclass(init=True)
+class TestData:
+    name: str
+    func: str
+    intervals: dict[str, Interval]
+    precision: Decimal
+    extremum_type: str
+    answer: Decimal
+
+
+TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str)
+
+
+def custom_name_func(testcase_func, param_num, param):
+    args = param.args
+    return parameterized.to_safe_name("_".join([args[0].name, args[1], args[2]]))
+
+
+def construct_test(row):
+    intervals = dict()
+    for var_int_string in row["Intervals"].split(" "):
+        variable_name, interval_string = var_int_string.split(":")
+        a, b = interval_string.split(",")
+        a = Decimal(a[1:])
+        b = Decimal(b[:-1])
+        intervals[variable_name] = Interval(a, b)
+    return TestData(name=row["Test name"], func=row["Function"],
+                    extremum_type=row["Extr"], answer=Decimal(row["Correct"]),
+                    intervals=intervals, precision=Decimal(row["Precision"]))
 
 
 class TestExtr(unittest.TestCase):
-    def test_base(self):
-        f = "x**2 + 1"
-        base = "0."
-        for i in range(200):
-            epsilon = Decimal(base + '1')
-            res = get_extremum_estimation(
-                f, {"x": ia.Interval(Decimal("-10"), Decimal("100"))}, "min", epsilon
-            )
-            self.assertTrue(abs(Decimal(res) - Decimal("1")) < epsilon)
-            base += '0'
 
-    def test_border(self):
-        f = "x"
-        base = "0."
-        for i in range(100):
-            epsilon = Decimal(base + '1')
-            res = get_extremum_estimation(
-                f, {"x": ia.Interval(Decimal("-10000"), Decimal("100"))}, "min", epsilon
-            )
-            self.assertTrue(abs(Decimal(res) - Decimal("-10000")) < epsilon)
-            base += '0'
-        f = "x**3"
-        base = "0."
-        for i in range(10):
-            epsilon = Decimal(base + '1')
-            res = get_extremum_estimation(
-                f, {"x": ia.Interval(Decimal("100"), Decimal("200"))}, "min", epsilon
-            )
-            self.assertTrue(abs(Decimal(res) - Decimal("1000000")) < epsilon)
-            base += '0'
-
-    def test_exp(self):
-        f = "exp(x)"
-        base = "0."
-        for i in range(10):
-            epsilon = Decimal(base + '1')
-            res = get_extremum_estimation(
-                f, {"x": ia.Interval(Decimal('1'), Decimal('10'))}, "min", epsilon
-            )
-            self.assertTrue(abs(Decimal(res) - Decimal("2.7182818284590452353602874713526624")) < epsilon)
-            base += '0'
-
-    def test_TL_moment(self):
-        f = "x**2 + x + 1"
-        base = "0."
-        for i in range(10):
-            epsilon = Decimal(base + '1')
-            res = get_extremum_estimation(
-                f, {"x": ia.Interval(Decimal("-100"), Decimal("100"))}, "min", epsilon
-            )
-            self.assertTrue(abs(Decimal(res) - Decimal("0.75")) < epsilon)
-            base += '0'
-
-    def test_dot(self):
-        f = "1"
-        base = "0."
-        for i in range(10):
-            epsilon = Decimal(base + '1')
-            res = get_extremum_estimation(
-                f, {"x": ia.Interval(Decimal("-10"), Decimal("100"))}, "min", epsilon
-            )
-            self.assertTrue(abs(Decimal(res) - Decimal("1")) < epsilon)
-            base += '0'
+    @parameterized.expand(product([construct_test(row) for index, row in TEST_TABLE.iterrows()],
+                                  EXTENSIONS,
+                                  METHODS), name_func=custom_name_func)
+    def test(self, test, extension, method):
+        result = get_extremum_estimation(test.func, test.intervals,
+                                         test.extremum_type, test.precision,
+                                         extension, method)
+        self.assertTrue(abs(test.answer - result) < test.precision)
 
 
 def suite():
     s = unittest.TestSuite()
-    s.addTest(TestExtr('test_base'))
-    s.addTest(TestExtr('test_border'))
-    s.addTest(TestExtr('test_exp'))
-    s.addTest(TestExtr('test_TL_moment'))
-    s.addTest(TestExtr('test_dot'))
+    s.addTest(TestExtr('test'))
     return s
 
 
