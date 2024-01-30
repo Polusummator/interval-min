@@ -2,10 +2,8 @@ import unittest
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import product
-
 import pandas as pd
 from parameterized import parameterized
-
 from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS
 from mp_exp import Interval
 
@@ -50,6 +48,7 @@ class TestExtr(unittest.TestCase):
         result = get_extremum_estimation(test.func, test.intervals,
                                          test.extremum_type, test.precision,
                                          extension, method)
+        print(f" Result value: {result}")
         self.assertTrue(abs(test.answer - result) < test.precision)
 
 
