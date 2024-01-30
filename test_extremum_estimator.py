@@ -18,7 +18,7 @@ class TestData:
     answer: Decimal
 
 
-TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str)
+TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str).fillna("")
 
 
 def custom_name_func(testcase_func, param_num, param):
@@ -28,7 +28,7 @@ def custom_name_func(testcase_func, param_num, param):
 
 def construct_test(row):
     intervals = dict()
-    for var_int_string in row["Intervals"].split(" "):
+    for var_int_string in row["Intervals"].split():
         variable_name, interval_string = var_int_string.split(":")
         a, b = interval_string.split(",")
         a = Decimal(a[1:])
