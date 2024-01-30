@@ -1,50 +1,55 @@
-import csv
-from decimal import Decimal
 import unittest
+from dataclasses import dataclass
+from decimal import Decimal
+from itertools import product
 
-from extremum_estimator import get_extremum_estimation
-import mp_exp.interval_arithmetics as ia
+import pandas as pd
+from parameterized import parameterized
+
+from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS
+from mp_exp import Interval
+
+
+@dataclass(init=True)
+class TestData:
+    name: str
+    func: str
+    intervals: dict[str, Interval]
+    precision: Decimal
+    extremum_type: str
+    answer: Decimal
+
+
+TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str)
+
+
+def custom_name_func(testcase_func, param_num, param):
+    return parameterized.to_safe_name("_".join(str(x) for x in param.args))
+
+
+def construct_test(row):
+    intervals = dict()
+    for var_int_string in row["Intervals"].split(" "):
+        variable_name, interval_string = var_int_string.split(":")
+        a, b = interval_string.split(",")
+        a = Decimal(a[1:])
+        b = Decimal(b[:-1])
+        intervals[variable_name] = Interval(a, b)
+    return TestData(name=row["Test name"], func=row["Function"],
+                    extremum_type=row["Extr"], answer=Decimal(row["Correct"]),
+                    intervals=intervals, precision=Decimal(row["Precision"]))
 
 
 class TestExtr(unittest.TestCase):
-    def test(self):
-        print("\n\n\n")
-        with open('test_extremum_estimator.csv', 'r', encoding='utf-8') as csv_file:
-            caption = ""
-            for num, row in enumerate(csv.reader(csv_file, delimiter=',')):
-                if not num:
-                    caption = row
-                    continue
-                else:
-                    f = ""
-                    ans = ""
-                    d = dict()
-                    extr = ""
-                    precision = Decimal("1")
-                    for nm, data in enumerate(row):
-                        if caption[nm] == "Function":
-                            f = data
-                        elif caption[nm] == "Extr":
-                            extr = data
-                        elif caption[nm] == "Intervals":
-                            s = data.split(" ")
-                            for x in s:
-                                ds = x.split(":")
-                                dx = ds[1].split(",")
-                                a = Decimal(dx[0][1:])
-                                b = Decimal(dx[1][:-1])
-                                d = {ds[0]: ia.Interval(a, b)}
-                        elif caption[nm] == "Correct":
-                            ans = Decimal(data)
-                        elif caption[nm] == "Precision":
-                            precision = Decimal(data)
-                        print(f'{caption[nm]}: {data}')
-                    try:
-                        res = get_extremum_estimation(f, d, extr, precision)
-                        self.assertTrue(abs(Decimal(res) - ans) < precision)
-                        print(f"TEST PASSED\n")
-                    except:
-                        print(f"TEST FAILED\n")
+
+    @parameterized.expand(product(TEST_TABLE["Test name"], EXTENSIONS, METHODS), name_func=custom_name_func)
+    def test(self, test_name, extension, method):
+        row = TEST_TABLE[TEST_TABLE["Test name"] == test_name].iloc[0]
+        test = construct_test(row)
+        result = get_extremum_estimation(test.func, test.intervals,
+                                         test.extremum_type, test.precision,
+                                         extension, method)
+        self.assertTrue(abs(test.answer - result) < test.precision)
 
 
 def suite():
