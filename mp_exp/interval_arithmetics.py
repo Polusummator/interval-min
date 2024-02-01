@@ -148,36 +148,34 @@ class Interval:
 
     def __pow__(self, other):
         if isinstance(other, int) != 0:
+            copy = Interval(self.a, self.b)
             if other == 0:
                 return convert_to_interval(1)
             if other < 0:
-                # TODO: add handling for intervals containing zero
-                inverse = convert_to_interval(1) / self
-                self.a = inverse.a
-                self.b = inverse.b
+                copy = convert_to_interval(1) / self
                 other *= -1
 
             _set_rounding_mode_floor()
             if other % 2 == 0:
-                if self.a <= c_zero and self.b >= c_zero:
+                if copy.a <= c_zero <= copy.b:
                     a = c_zero
                     _set_rounding_mode_ceil()
-                    if -self.a < self.b:
-                        b = self.b ** other
+                    if -copy.a < copy.b:
+                        b = copy.b ** other
                     else:
-                        b = self.a ** other
-                elif self.a > c_zero:
-                    a = self.a ** other
+                        b = copy.a ** other
+                elif copy.a > c_zero:
+                    a = copy.a ** other
                     _set_rounding_mode_ceil()
-                    b = self.b ** other
-                elif self.b < c_zero:
-                    a = self.b ** other
+                    b = copy.b ** other
+                elif copy.b < c_zero:
+                    a = copy.b ** other
                     _set_rounding_mode_ceil()
-                    b = self.a ** other
+                    b = copy.a ** other
             else:
-                a = self.a ** other
+                a = copy.a ** other
                 _set_rounding_mode_ceil()
-                b = self.b ** other
+                b = copy.b ** other
             return Interval(a, b)
         else:
             raise TypeError("Power must be an integer")
