@@ -2,10 +2,8 @@ import unittest
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import product
-
 import pandas as pd
 from parameterized import parameterized
-
 from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS
 from mp_exp import Interval
 
@@ -20,7 +18,7 @@ class TestData:
     answer: Decimal
 
 
-TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str)
+TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str).fillna("")
 
 
 def custom_name_func(testcase_func, param_num, param):
@@ -30,7 +28,7 @@ def custom_name_func(testcase_func, param_num, param):
 
 def construct_test(row):
     intervals = dict()
-    for var_int_string in row["Intervals"].split(" "):
+    for var_int_string in row["Intervals"].split():
         variable_name, interval_string = var_int_string.split(":")
         a, b = interval_string.split(",")
         a = Decimal(a[1:])
@@ -50,7 +48,10 @@ class TestExtr(unittest.TestCase):
         result = get_extremum_estimation(test.func, test.intervals,
                                          test.extremum_type, test.precision,
                                          extension, method)
-        self.assertTrue(abs(test.answer - result) < test.precision)
+        difference = abs(test.answer - result)
+        message = (f"expected: {test.answer}, actual: {result}.\n"
+                   f"difference > precision: {difference} > {test.precision}")
+        self.assertTrue(difference < test.precision, msg=message)
 
 
 def suite():
