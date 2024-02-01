@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from decimal import Decimal
 import operator
 import sympy
 
@@ -25,7 +26,7 @@ def _get_tree(expr, elementary_func):
         case sympy.Integer():
             return ConstNode(int(expr))
         case sympy.Float():
-            return ConstNode(float(expr))
+            return ConstNode(Decimal(str(expr)))
         case sympy.log():
             return UnaryNode(elementary_func.log, arguments[0])
         case sympy.exp():
