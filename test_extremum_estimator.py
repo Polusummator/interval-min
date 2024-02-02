@@ -2,10 +2,13 @@ import unittest
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import product
+import timeout_decorator
 import pandas as pd
 from parameterized import parameterized
 from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS
 from mp_exp import Interval
+
+TIMEOUT = 5
 
 
 @dataclass(init=True)
@@ -44,6 +47,7 @@ class TestExtr(unittest.TestCase):
     @parameterized.expand(product([construct_test(row) for index, row in TEST_TABLE.iterrows()],
                                   EXTENSIONS,
                                   METHODS), name_func=custom_name_func)
+    @timeout_decorator.timeout(TIMEOUT)
     def test(self, test, extension, method):
         result = get_extremum_estimation(test.func, test.intervals,
                                          test.extremum_type, test.precision,
