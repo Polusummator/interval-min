@@ -1,1 +1,1 @@
-from .interval_extension import IntervalExtension
+from .natural_extension import NaturalExtension

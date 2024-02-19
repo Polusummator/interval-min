@@ -1,7 +1,7 @@
 import sympy
 
 
-class IntervalExtension:
+class NaturalExtension:
     def __init__(self, variables: dict, expr: str):
         self.function = sympy.lambdify(list(variables.keys()), expr)
 
