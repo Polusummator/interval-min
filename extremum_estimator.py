@@ -3,11 +3,12 @@ from decimal import Decimal
 
 from mp_exp import set_precision, Interval
 
+from interval_extension import IntervalExtension
 from tree_factory import get_interval_tree
 from optimization_methods import MooreSkelboe
 
 METHODS = {"moore_skelboe": MooreSkelboe}
-EXTENSIONS = {"natural": get_interval_tree}
+EXTENSIONS = {"natural": IntervalExtension}
 
 
 def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_type: str = "min",
@@ -40,7 +41,7 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
     #     TODO: Set a number of Taylor's series terms based on precision
 
     parsed_function = _parse_function(func)
-    interval_extension = _parse_extension_type(extension)(parsed_function)
+    interval_extension = _parse_extension_type(extension)(func_args, parsed_function)
     extremum_type = _parse_extremum_type(extremum_type)
     method_obj = _parse_method(method)(func_args, interval_extension, precision, extremum_type)
 
