@@ -1,9 +1,9 @@
-import sympy
+from function_evaluator import FunctionEvaluator
+from mp_exp import exp, log, factorial
 
 
-class NaturalExtension:
-    def __init__(self, variables: dict, expr: str):
-        self.function = sympy.lambdify(list(variables.keys()), expr)
+interval_operations = {'exp': exp, 'log': log, 'factorial': factorial}
 
-    def evaluate(self, variables: dict):
-        return self.function(*list(variables.values()))
+
+def get_natural_extension(variables: dict, expr: str):
+    return FunctionEvaluator(variables, expr, interval_operations)
