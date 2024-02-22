@@ -3,13 +3,13 @@ from decimal import Decimal
 
 from mp_exp import set_precision, Interval
 
-from interval_extensions import get_natural_extension
+from interval_extensions import get_natural_extension, get_centred_form
 from optimization_methods import MooreSkelboe
 
 from helpers import get_scale
 
 METHODS = {"moore_skelboe": MooreSkelboe}
-EXTENSIONS = {"natural": get_natural_extension}
+EXTENSIONS = {"natural": get_natural_extension, "centred_form": get_centred_form}
 
 
 def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_type: str = "min",
