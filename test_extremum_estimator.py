@@ -23,6 +23,7 @@ class TestData:
 
 
 TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str).fillna("")
+# TEST_TABLE = TEST_TABLE[TEST_TABLE["Test name"] == "test_01"]
 
 
 def custom_name_func(testcase_func, param_num, param):
