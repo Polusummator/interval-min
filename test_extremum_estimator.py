@@ -5,6 +5,7 @@ from itertools import product
 import timeout_decorator
 import pandas as pd
 from parameterized import parameterized
+import re
 from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS
 from mp_exp import Interval
 
@@ -31,12 +32,9 @@ def custom_name_func(testcase_func, param_num, param):
 
 def construct_test(row):
     intervals = dict()
-    for var_int_string in row["Intervals"].split():
-        variable_name, interval_string = var_int_string.split(":")
-        a, b = interval_string.split(",")
-        a = Decimal(a[1:])
-        b = Decimal(b[:-1])
-        intervals[variable_name] = Interval(a, b)
+    parsed_input = re.findall(r'([a-zA-Z]+).*?\[([-+]?\d*\.?\d+).*?([-+]?\d*\.?\d+)\]', row["Intervals"])
+    for variable_name, a, b in parsed_input:
+        intervals[variable_name] = Interval(Decimal(a), Decimal(b))
     return TestData(name=row["Test name"], func=row["Function"],
                     extremum_type=row["Extr"], answer=Decimal(row["Correct"]),
                     intervals=intervals, precision=Decimal(row["Precision"]))
