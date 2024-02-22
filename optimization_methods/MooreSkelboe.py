@@ -1,5 +1,6 @@
 from mp_exp.interval_arithmetics import *
 from sortedcontainers import SortedList
+from helpers import get_scale
 
 
 class MooreSkelboe:
@@ -8,7 +9,7 @@ class MooreSkelboe:
         self.func_args = func_args
         self.interval_extension = interval_extension
         self.answer_precision = precision
-        self.calculation_precision = precision
+        self.calculation_scale = get_scale(precision)
         self.extremum_type = extremum_type
 
     def calculate(self):
@@ -36,9 +37,9 @@ class MooreSkelboe:
         return [left_half, right_half]
 
     def _set_precision(self, interval: Interval):
-        if wid(interval) <= self.calculation_precision * 2:
-            set_precision(-self.calculation_precision.as_tuple().exponent + 5)
-            self.calculation_precision /= 10
+        if get_scale(wid(interval)) <= self.calculation_scale:
+            set_precision(self.calculation_scale + 5)
+            self.calculation_scale += 1
 
     def _get_sorted_list(self):
         if self.extremum_type == "min":

@@ -6,6 +6,8 @@ from mp_exp import set_precision, Interval
 from interval_extensions import get_natural_extension
 from optimization_methods import MooreSkelboe
 
+from helpers import get_scale
+
 METHODS = {"moore_skelboe": MooreSkelboe}
 EXTENSIONS = {"natural": get_natural_extension}
 
@@ -35,8 +37,8 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
     point where maximum/minimum is reached
     """
 
-    precision_digits = -precision.as_tuple().exponent + 5
-    set_precision(precision_digits)
+    calculation_scale = get_scale(precision)
+    set_precision(calculation_scale + 5)
     #     TODO: Set a number of Taylor's series terms based on precision
 
     parsed_function = _parse_function(func)
@@ -45,7 +47,7 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
     method_obj = _parse_method(method)(func_args, interval_extension, precision, extremum_type)
 
     if not parsed_function.free_symbols:
-        return Decimal(str(parsed_function.evalf(precision_digits)))
+        return Decimal(str(parsed_function.evalf(calculation_scale)))
 
     variable_interval = method_obj.calculate()
     return interval_extension.evaluate(variable_interval).a
