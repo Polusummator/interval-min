@@ -1,8 +1,5 @@
 from interval_extensions import get_natural_extension
-from mp_exp import exp, log, factorial
 from .differentiation import get_gradient_evaluator
-
-interval_operations = {'exp': exp, 'log': log, 'factorial': factorial}
 
 
 class CentredForm:
