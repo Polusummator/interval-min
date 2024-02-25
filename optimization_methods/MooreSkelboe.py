@@ -1,10 +1,12 @@
-from mp_exp.interval_arithmetics import *
+from mp_exp import Interval, set_precision
 from sortedcontainers import SortedList
 from helpers import get_scale
 
+from decimal import Decimal
+
 
 class MooreSkelboe:
-    def __init__(self, func_args: dict[str, Interval], interval_extension, precision: dec.Decimal,
+    def __init__(self, func_args: dict[str, Interval], interval_extension, precision: Decimal,
                  extremum_type: str) -> None:
         self.func_args = func_args
         self.interval_extension = interval_extension
@@ -15,7 +17,7 @@ class MooreSkelboe:
     def calculate(self):
         cells = self._get_sorted_list()
         cells.add(self.func_args)
-        while wid(self.interval_extension.evaluate(current_cell := cells[0])) >= self.answer_precision:
+        while self.interval_extension.evaluate(current_cell := cells[0]).wid >= self.answer_precision:
             max_wid_variable = self._get_max_wid_variable(current_cell)
             new_cells = self._split_domain(current_cell, max_wid_variable)
             cells.pop(0)
@@ -26,8 +28,8 @@ class MooreSkelboe:
     def _split_domain(self, domain: dict[str, Interval], variable: str) -> list[dict]:
         split_interval = domain[variable]
         self._set_precision(split_interval)
-        new_interval_left = Interval(split_interval.a, mid(split_interval))
-        new_interval_right = Interval(mid(split_interval), split_interval.b)
+        new_interval_left = Interval(split_interval.a, split_interval.mid)
+        new_interval_right = Interval(split_interval.mid, split_interval.b)
 
         left_half = domain.copy()
         right_half = domain.copy()
@@ -37,7 +39,7 @@ class MooreSkelboe:
         return [left_half, right_half]
 
     def _set_precision(self, interval: Interval):
-        if get_scale(wid(interval)) <= self.calculation_scale:
+        if get_scale(interval.wid) <= self.calculation_scale:
             set_precision(self.calculation_scale + 5)
             self.calculation_scale += 1
 
@@ -50,7 +52,7 @@ class MooreSkelboe:
         max_wid_variable = 0  # sympy.Symbol actually
         max_wid = 0
         for item in domain.items():
-            if wid(item[1]) > max_wid:
-                max_wid = wid(item[1])
+            if item[1].wid > max_wid:
+                max_wid = item[1].wid
                 max_wid_variable = item[0]
         return max_wid_variable

@@ -28,8 +28,6 @@ c_two = dec.Decimal('2')
 c_mtwo = dec.Decimal('-2')
 
 
-
-
 def set_precision(prec):
     """
     Sets the precision as the number of significant decimal digits in mantissa
@@ -44,17 +42,19 @@ def set_precision(prec):
     return prev
 
 
-
 def _set_rounding_mode(rounding_mode):
     prev = dec.getcontext().rounding
     dec.getcontext().rounding = rounding_mode
     return prev
 
+
 def _set_rounding_mode_default():
     return _set_rounding_mode(dec.ROUND_HALF_EVEN)
 
+
 def _set_rounding_mode_ceil():
     return _set_rounding_mode(dec.ROUND_CEILING)
+
 
 def _set_rounding_mode_floor():
     return _set_rounding_mode(dec.ROUND_FLOOR)
@@ -66,6 +66,7 @@ def _my_mul(a, b):
     else:
         return a * b
 
+
 def _my_div(a, b):
     if b.is_infinite():
         if a.is_infinite():
@@ -74,20 +75,26 @@ def _my_div(a, b):
             return dec.Decimal('0')
     return a / b
 
+
 class Interval:
     """Class for storing interval values and perform interval operations"""
 
-    def _convert_to_interval(other):
-        if type(other) == dec.Decimal:
+    @classmethod
+    def to_interval(cls, other):
+        """
+        Constructs a new dot Interval Decimal, int or float.
+        Returns Interval if Interval is given.
+        """
+
+        if type(other) is dec.Decimal:
             return Interval(other, other)
-        elif type(other) == int or type(other) == float:
+        elif type(other) is int or type(other) is float:
             v = dec.Decimal(other)
             return Interval(v, v)
         else:
             return other
 
-
-    def __init__(self, a : dec.Decimal | float | int, b : dec.Decimal | float | int):
+    def __init__(self, a: dec.Decimal | float | int, b: dec.Decimal | float | int):
         """
         Constructor
 
@@ -103,7 +110,6 @@ class Interval:
         else:
             raise TypeError("Interval constructor's arguments must be instances of Decimal")
 
-
     def __neg__(self):
         _set_rounding_mode_floor()
         a = -self.b
@@ -115,7 +121,7 @@ class Interval:
         return (self.a == other.a) and (self.b == other.b)
 
     def __add__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         _set_rounding_mode_floor()
         a = self.a + nother.a
         _set_rounding_mode_ceil()
@@ -123,7 +129,7 @@ class Interval:
         return Interval(a, b)
 
     def __sub__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         _set_rounding_mode_floor()
         a = self.a - nother.b
         _set_rounding_mode_ceil()
@@ -131,7 +137,7 @@ class Interval:
         return Interval(a, b)
 
     def __mul__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         _set_rounding_mode_floor()
         aa = _my_mul(self.a, nother.a)
         ab = _my_mul(self.a, nother.b)
@@ -147,12 +153,12 @@ class Interval:
         return Interval(a, b)
 
     def __pow__(self, other):
-        if isinstance(other, int) != 0:
+        if type(other) is int:
             copy = Interval(self.a, self.b)
             if other == 0:
-                return convert_to_interval(1)
+                return Interval.to_interval(1)
             if other < 0:
-                copy = convert_to_interval(1) / self
+                copy = Interval.to_interval(1) / self
                 other *= -1
 
             _set_rounding_mode_floor()
@@ -180,9 +186,8 @@ class Interval:
         else:
             raise TypeError("Power must be an integer")
 
-
     def __truediv__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         if nother.a == nother.b == c_zero:
             if self.a <= c_zero <= self.b:
                 return Interval(c_minf, c_inf)
@@ -214,7 +219,7 @@ class Interval:
                 _set_rounding_mode_ceil()
                 rb = _my_div(self.a, nother.a)
                 return Interval(c_minf, rb)
-        else: #nother.a < 0 < nother.b:
+        else:  # nother.a < 0 < nother.b:
             if self.b < c_zero:
                 _set_rounding_mode_ceil()
                 ra = _my_div(self.b, nother.b)
@@ -227,110 +232,73 @@ class Interval:
                 rb = _my_div(self.a, nother.b)
             return [Interval(c_minf, ra), Interval(rb, c_inf)]
 
-
-
-
-
-
     def __radd__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         return nother.__add__(self)
 
-
     def __rsub__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         return nother.__sub__(self)
 
-
     def __rmul__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         return nother.__mul__(self)
 
-
     def __rtruediv__(self, other):
-        nother = Interval._convert_to_interval(other)
+        nother = Interval.to_interval(other)
         return nother.__truediv__(self)
 
     def __repr__(self):
         return "[" + str(self.a) + ", " + str(self.b) + "]"
 
-#     def mid(self):
-#         """
-#         Returns the best approximation of the interval central point
-#         """
-#         return dec.Decimal('0.5') * (self.a + self.b)
+    @property
+    def mid(self):
+        """Returns the best approximation of the interval central point"""
+        _set_rounding_mode_default()
+        return dec.Decimal('0.5') * (self.a + self.b)
 
-#     def mid_int(self):
-#         """
-#         Returns the minimal interval enclosing the interval central point
-#         """
-#         _set_rounding_mode_floor()
-#         a = dec.Decimal('0.5') * (self.a + self.b)
-#         _set_rounding_mode_ceil()
-#         b = dec.Decimal('0.5') * (self.a + self.b)
-#         return Interval(a, b)
+    @property
+    def mid_interval(self):
+        """Returns the narrowest interval, containing the interval central point"""
+        _set_rounding_mode_floor()
+        a = dec.Decimal('0.5') * (self.a + self.b)
+        _set_rounding_mode_ceil()
+        b = dec.Decimal('0.5') * (self.a + self.b)
+        return Interval(a, b)
 
+    @property
+    def wid(self):
+        """Returns the closest outer approximation of the interval's width"""
+        _set_rounding_mode_ceil()
+        return self.b - self.a
 
-# Some utility function for working with intervals
+    def __contains__(self, point):
+        return self.a <= point <= self.b
 
-def convert_to_interval(val):
-    """
-    Returns an interval [ival, ival]
-    
-    Parameters
-    ----------
-    val : Decimal, int, float
-    """
-    return Interval._convert_to_interval(val)
+    @property
+    def is_dot_interval(self):
+        """
+        Checks whether the interval is a dot interval, i.e. left end = right end
 
-def mid(ival):
-    """
-    Returns the best approximation of the interval central point
-    
-    Parameters
-    ----------
-    ival : interval
-    """
-    _set_rounding_mode_default()
-    return dec.Decimal('0.5') * (ival.a + ival.b)
+        Returns:
+        --------
+        True if x is a dot interval, False otherwise
+        """
+        res = dec.compare(self.a, self.b)
+        return True if res == c_zero else False
 
-def mid_interval(ival):
-    """
-    Returns the narrowest interval, containing the interval central point
-    
-    Parameters
-    ----------
-    ival : interval
-    """
-    _set_rounding_mode_floor()
-    a = dec.Decimal('0.5') * (ival.a + ival.b)
-    _set_rounding_mode_ceil()
-    b = dec.Decimal('0.5') * (ival.a + ival.b)
-    return Interval(a, b)
-
-
-def wid(ival):
-    """
-    Returns the closest outer approximation of the interval's width
-    
-    Parameters
-    ----------
-    ival : interval
-    """
-    _set_rounding_mode_ceil()
-    return ival.b - ival.a
-
+    # Some utility function for working with intervals
 
 
 def intersect(ival1, ival2):
     """
-    Computes the intersection of intervals 
-    
+    Computes the intersection of intervals
+
     Parameters
     ----------
     ival1 : 1st interval
     ival2 : 2nd interval
-    
+
     Returns
     -------
     The intersection of intervals ival1 and ival2 (None in there is no intersection)
@@ -341,38 +309,3 @@ def intersect(ival1, ival2):
         a = max(ival1.a, ival2.a)
         b = min(ival1.b, ival2.b)
         return Interval(a, b)
-
-def is_in(x, ival):
-    """
-    Checks whether point x belongs to the interval ival
-    
-    Parameters:
-    -----------
-    x : point
-    ival : interval
-    
-    Returns:
-    -------
-    True if x lies withing ival, False otherwise
-    """
-    return ival.a <= x and x <= ival.b
-
-
-def is_dot_interval(x):
-    """
-    Checks whether the given interval is a dot interval, i.e. left end = right end
-    
-    Parameters:
-    -----------
-    x : interval
-    
-    Returns:
-    --------
-    True if x is a dot interval, False otherwise
-    """
-    res = dec.compare(x.a, x.b)
-    return True if res == c_zero else False
-
-
-
-
