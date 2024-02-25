@@ -1,0 +1,54 @@
+from interval_extensions import get_natural_extension
+from mp_exp import intersect, Interval
+from .differentiation import get_gradient_evaluator
+from interval_extensions.helpers import calculate_centred_form
+
+from decimal import Decimal
+
+
+def cut(value, cut_interval):
+    if value < cut_interval.a:
+        return cut_interval.a
+    if value > cut_interval.b:
+        return cut_interval.b
+    return value
+
+
+class BicentredForm:
+    def __init__(self, variables: dict, expr: str):
+        self.extension = get_natural_extension(variables, expr)
+        self.gradient_evaluator = get_gradient_evaluator(variables, expr)
+
+    def evaluate(self, variables: dict):
+        gradient = self.gradient_evaluator.evaluate(variables)
+        p = self._get_p(gradient)
+        centre = self._get_centre(variables, p, 1)
+        lower_form = calculate_centred_form(variables, centre, gradient, self.extension)
+
+        centre = self._get_centre(variables, p, -1)
+        upper_form = calculate_centred_form(variables, centre, gradient, self.extension)
+
+        return intersect(lower_form, upper_form)
+
+    def _get_p(self, gradient):
+        p = dict()
+        for variable, interval in gradient.items():
+            mid = interval.mid
+            rad = interval.rad
+            if rad == mid == 0:
+                p[variable] = 0
+            elif rad == 0:
+                p[variable] = Decimal('1').copy_sign(mid)
+            else:
+                p[variable] = cut(interval.mid / interval.rad, Interval(-1, 1))
+        return p
+
+    def _get_centre(self, variables: dict, p: dict, sign):
+        centre = dict()
+        for variable, interval in variables.items():
+            centre[variable] = Interval.to_interval(interval.mid + p[variable] * interval.rad * sign)
+        return centre
+
+
+def get_bicentred_form(variables: dict, expr: str):
+    return BicentredForm(variables, expr)
