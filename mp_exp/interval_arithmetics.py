@@ -272,6 +272,11 @@ class Interval:
         _set_rounding_mode_ceil()
         return self.b - self.a
 
+    @property
+    def rad(self):
+        """Returns the closest outer approximation of the interval's width"""
+        return self.wid / 2
+
     def __contains__(self, point):
         return self.a <= point <= self.b
 
