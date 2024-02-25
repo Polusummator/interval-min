@@ -35,12 +35,10 @@ class BicentredForm:
         for variable, interval in gradient.items():
             mid = interval.mid
             rad = interval.rad
-            if rad == mid == 0:
-                p[variable] = 0
-            elif rad == 0:
-                p[variable] = Decimal('1').copy_sign(mid)
+            if rad == 0:
+                p[variable] = 1  # if rad is 0, this value is not used
             else:
-                p[variable] = cut(interval.mid / interval.rad, Interval(-1, 1))
+                p[variable] = cut(mid / rad, Interval(-1, 1))
         return p
 
     def _get_centre(self, variables: dict, p: dict, sign):
