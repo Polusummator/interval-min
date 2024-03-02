@@ -1,9 +1,7 @@
 from interval_extensions import get_natural_extension
-from mp_exp import intersect, Interval
 from interval_extensions.helpers import calculate_centred_form
+from mp_exp import intersect, Interval
 from .differentiation import SympyGradientEvaluator
-
-from decimal import Decimal
 
 
 def cut(value, cut_interval):

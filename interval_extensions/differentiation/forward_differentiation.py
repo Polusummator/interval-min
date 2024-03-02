@@ -1,7 +1,7 @@
-from mp_exp import Interval, exp, log, factorial
 from decimal import Decimal
 
 from function_evaluator import FunctionEvaluator
+from mp_exp import Interval, exp, log
 
 
 class DerivativePair:
@@ -93,7 +93,7 @@ class ForwardGradientEvaluator:
         gradient = dict()
         derivative_pairs = {variable: DerivativePair(interval) for variable, interval in variables.items()}
         for variable, interval in variables.items():
-            derivative_pairs[variable]= DerivativePair(interval, Interval.to_interval(1))
+            derivative_pairs[variable].derivative = Interval.to_interval(1)
             gradient[variable] = self.gradient_evaluator.evaluate(derivative_pairs).derivative
-            derivative_pairs[variable] = DerivativePair(interval, Interval.to_interval(0))
+            derivative_pairs[variable].derivative = Interval.to_interval(0)
         return gradient

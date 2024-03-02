@@ -1,8 +1,8 @@
-from mp_exp import Interval, exp, log, factorial
 from decimal import Decimal
-from .forward_differentiation import DerivativePair, pair_exp, pair_log
 
 from function_evaluator import FunctionEvaluator
+from mp_exp import Interval, exp, log
+from .forward_differentiation import DerivativePair, pair_exp, pair_log
 
 
 class SlopeTuple:
@@ -60,7 +60,7 @@ class SlopeTuple:
         return SlopeTuple(value1, value2, slope)
 
     def __pow__(self, power):
-        derivative = DerivativePair(self.value1, 1)**power
+        derivative = DerivativePair(self.value1, 1) ** power
         value1 = self.value1 ** power
         value2 = self.value2 ** power
         slope = derivative.derivative * self.slope
