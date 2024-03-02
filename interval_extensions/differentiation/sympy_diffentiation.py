@@ -11,5 +11,5 @@ class SympyGradientEvaluator:
             derivative = sympy.diff(expr, variable)
             self.gradient[variable] = get_natural_extension(variables, derivative)
 
-    def evaluate(self, variables: dict) -> dict:
+    def evaluate(self, variables: dict, *args) -> dict:
         return {variable: Interval.to_interval(self.gradient[variable].evaluate(variables)) for variable in variables}

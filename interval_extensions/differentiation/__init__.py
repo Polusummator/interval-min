@@ -1,1 +1,2 @@
 from .sympy_diffentiation import SympyGradientEvaluator
+from .forward_slopes import ForwardSlopeEvaluator

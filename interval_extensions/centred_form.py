@@ -12,5 +12,5 @@ class CentredForm:
         for variable, interval in variables.items():
             centre[variable] = interval.mid_interval
 
-        gradient = self.gradient_evaluator.evaluate(variables)
+        gradient = self.gradient_evaluator.evaluate(variables, centre)
         return calculate_centred_form(variables, centre, gradient, self.extension)

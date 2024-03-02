@@ -1,18 +1,19 @@
-import sympy
 from decimal import Decimal
 
-from mp_exp import set_precision, Interval
-
-from interval_extensions import get_natural_extension, CentredForm, BicentredForm, SympyGradientEvaluator
-from optimization_methods import MooreSkelboe
+import sympy
 
 from helpers import get_scale
+from interval_extensions import get_natural_extension, CentredForm, BicentredForm, SympyGradientEvaluator, \
+    ForwardSlopeEvaluator
+from mp_exp import set_precision, Interval
+from optimization_methods import MooreSkelboe
 
 METHODS = {"moore_skelboe": MooreSkelboe}
 EXTENSIONS = {"natural": get_natural_extension,
               "centred_form": CentredForm,
               "bicentred_form": BicentredForm}
-DIFFS = {"sympy_forward_mode": SympyGradientEvaluator}
+DIFFS = {"sympy_forward_mode": SympyGradientEvaluator,
+         "slopes_forward_mode": ForwardSlopeEvaluator}
 
 
 def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_type: str = "min",
