@@ -13,7 +13,3 @@ class SympyGradientEvaluator:
 
     def evaluate(self, variables: dict) -> dict:
         return {variable: Interval.to_interval(self.gradient[variable].evaluate(variables)) for variable in variables}
-
-
-def get_gradient_evaluator(variables: dict, expr: str):
-    return SympyGradientEvaluator(variables, expr)

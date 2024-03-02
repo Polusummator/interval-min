@@ -5,5 +5,5 @@ from mp_exp import exp, log, factorial
 interval_operations = {'exp': exp, 'log': log, 'factorial': factorial}
 
 
-def get_natural_extension(variables: dict, expr: str):
+def get_natural_extension(variables: dict, expr: str, *args):
     return FunctionEvaluator(variables, expr, interval_operations)

@@ -97,7 +97,3 @@ class ForwardGradientEvaluator:
             gradient[variable] = self.gradient_evaluator.evaluate(derivative_pairs).derivative
             derivative_pairs[variable] = DerivativePair(interval, Interval.to_interval(0))
         return gradient
-
-
-def get_gradient_evaluator(variables: dict, expr: str):
-    return ForwardGradientEvaluator(variables, expr)
