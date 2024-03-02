@@ -53,6 +53,18 @@ class DerivativePair:
         derivative = self.value ** (power - 1) * self.derivative * (power)
         return DerivativePair(value, derivative)
 
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+        return self.__sub__(other)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __rtruediv__(self, other):
+        return self.__truediv__(other)
+
 
 def pair_log(pair: DerivativePair):
     value = log(pair.value)
