@@ -1,8 +1,7 @@
 from decimal import Decimal
-
-from function_evaluator import FunctionEvaluator
-from mp_exp import Interval, exp, log
 from .forward_differentiation import DerivativePair, pair_exp, pair_log
+from .function_evaluator import FunctionEvaluator
+from mp_exp import Interval, exp, log
 
 
 class SlopeTuple:

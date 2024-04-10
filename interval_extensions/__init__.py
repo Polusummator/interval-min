@@ -1,4 +1,5 @@
-from .natural_extension import get_natural_extension
-from .centred_form import CentredForm
 from .bicentred_form import BicentredForm
-from .differentiation import SympyGradientEvaluator, ForwardSlopeEvaluator
+from .centred_form import CentredForm
+from .forward_slopes import ForwardSlopeEvaluator
+from .natural_extension import get_natural_extension
+from .sympy_diffentiation import SympyGradientEvaluator

@@ -1,5 +1,6 @@
-from function_evaluator import FunctionEvaluator
+from .function_evaluator import FunctionEvaluator
 from mp_exp import exp, log, factorial
+
 
 interval_operations = {'exp': exp, 'log': log, 'factorial': factorial}
 

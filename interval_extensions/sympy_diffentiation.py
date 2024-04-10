@@ -1,7 +1,7 @@
 import sympy
 
-from interval_extensions import get_natural_extension
 from mp_exp import Interval
+from .natural_extension import get_natural_extension
 
 
 class SympyGradientEvaluator:
@@ -11,5 +11,5 @@ class SympyGradientEvaluator:
             derivative = sympy.diff(expr, variable)
             self.gradient[variable] = get_natural_extension(variables, derivative)
 
-    def evaluate(self, variables: dict, *args) -> dict:
+    def evaluate(self, variables: dict, *args) -> dict[str, Interval]:
         return {variable: Interval.to_interval(self.gradient[variable].evaluate(variables)) for variable in variables}

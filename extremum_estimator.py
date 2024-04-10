@@ -20,7 +20,7 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
                             precision: Decimal = Decimal("0.000001"), extension: str = "natural",
                             method: str = "moore_skelboe",
                             diff: str = "sympy_forward_mode") -> Decimal:
-    """Estimates interval for a given function with a given precision
+    """Estimate interval for a given function with a given precision
 
     Parameters
     ----------

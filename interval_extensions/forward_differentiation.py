@@ -1,10 +1,15 @@
 from decimal import Decimal
-
-from function_evaluator import FunctionEvaluator
+from .function_evaluator import FunctionEvaluator
 from mp_exp import Interval, exp, log
 
 
 class DerivativePair:
+    """
+    A class that represents a value and a derivative of a function.
+
+    This class is ment to be used with SymPy
+    """
+
     def __init__(self, value, derivative=Interval(0, 0)):
         self.value = Interval.to_interval(value)
         self.derivative = Interval.to_interval(derivative)

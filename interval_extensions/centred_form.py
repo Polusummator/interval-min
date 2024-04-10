@@ -1,5 +1,6 @@
-from interval_extensions import get_natural_extension
-from interval_extensions.helpers import calculate_centred_form
+from .natural_extension import get_natural_extension
+from .helpers import calculate_centred_form
+from mp_exp import Interval
 
 
 class CentredForm:
@@ -7,7 +8,7 @@ class CentredForm:
         self.extension = get_natural_extension(variables, expr)
         self.gradient_evaluator = gradient_evaluator(variables, expr)
 
-    def evaluate(self, variables: dict):
+    def evaluate(self, variables: dict[str, Interval]) -> Interval:
         centre = dict()
         for variable, interval in variables.items():
             centre[variable] = interval.mid_interval

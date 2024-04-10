@@ -1,7 +1,7 @@
-from interval_extensions import get_natural_extension
-from interval_extensions.helpers import calculate_centred_form
+from .forward_differentiation import ForwardGradientEvaluator
+from .helpers import calculate_centred_form
 from mp_exp import intersect, Interval
-from .differentiation import SympyGradientEvaluator
+from .natural_extension import get_natural_extension
 
 
 def cut(value, cut_interval):
@@ -15,7 +15,7 @@ def cut(value, cut_interval):
 class BicentredForm:
     def __init__(self, variables: dict, expr: str, gradient_evaluator):
         self.extension = get_natural_extension(variables, expr)
-        self.p_gradient_evaluator = SympyGradientEvaluator(variables, expr)
+        self.p_gradient_evaluator = ForwardGradientEvaluator(variables, expr)
         self.gradient_evaluator = gradient_evaluator(variables, expr)
 
     def evaluate(self, variables: dict):
