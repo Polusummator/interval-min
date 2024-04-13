@@ -2,6 +2,7 @@ from decimal import Decimal
 from .forward_differentiation import DerivativePair, pair_exp, pair_log
 from .function_evaluator import FunctionEvaluator
 from mp_exp import Interval, exp, log
+from .slopes_evaluator import SlopesEvaluator
 
 
 class SlopeTuple:
@@ -103,7 +104,7 @@ def slope_factorial(pair: SlopeTuple):
 slope_tuple_operations = {'exp': slope_exp, 'log': slope_log, 'factorial': slope_factorial}
 
 
-class ForwardSlopeEvaluator:
+class ForwardSlopeEvaluator(SlopesEvaluator):
     def __init__(self, expr: str, variable_names):
         self.gradient_evaluator = FunctionEvaluator(expr, variable_names, slope_tuple_operations)
 
