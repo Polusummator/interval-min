@@ -1,11 +1,12 @@
-from .natural_extension import get_natural_extension
+from .natural_extension import NaturalExtension
 from .helpers import calculate_centred_form
+from .interval_extension import IntervalExtension
 from mp_exp import Interval
 
 
-class CentredForm:
+class CentredForm(IntervalExtension):
     def __init__(self, variables: dict, expr: str, gradient_evaluator):
-        self.extension = get_natural_extension(variables, expr)
+        self.extension = NaturalExtension(variables, expr)
         self.gradient_evaluator = gradient_evaluator(variables, expr)
 
     def evaluate(self, variables: dict[str, Interval]) -> Interval:

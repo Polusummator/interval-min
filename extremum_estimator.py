@@ -3,13 +3,13 @@ from decimal import Decimal
 import sympy
 
 from helpers import get_scale
-from interval_extensions import get_natural_extension, CentredForm, BicentredForm, SympyGradientEvaluator, \
+from interval_extensions import NaturalExtension, CentredForm, BicentredForm, SympyGradientEvaluator, \
     ForwardSlopeEvaluator
 from mp_exp import set_precision, Interval
 from optimization_methods import MooreSkelboe
 
 METHODS = {"moore_skelboe": MooreSkelboe}
-EXTENSIONS = {"natural": get_natural_extension,
+EXTENSIONS = {"natural": NaturalExtension,
               "centred_form": CentredForm,
               "bicentred_form": BicentredForm}
 DIFFS = {"sympy_forward_mode": SympyGradientEvaluator,
