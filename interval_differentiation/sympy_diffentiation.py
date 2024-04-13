@@ -1,11 +1,11 @@
 import sympy
 
 from mp_exp import Interval
-from .natural_extension import NaturalExtension
-from .slopes_evaluator import SlopesEvaluator
+from interval_extensions.natural_extension import NaturalExtension
+from .slope_evaluator import SlopeEvaluator
 
 
-class SympyGradientEvaluator(SlopesEvaluator):
+class SympyGradientEvaluator(SlopeEvaluator):
     def __init__(self, expr: str, variable_names):
         self.gradient = dict()
         for variable_name in variable_names:

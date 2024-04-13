@@ -1,7 +1,7 @@
 import abc
 
 
-class SlopesEvaluator(abc.ABC):
+class SlopeEvaluator(abc.ABC):
     @abc.abstractmethod
     def __init__(self, expr: str, variable_names):
         """Initialize the slope evaluator for a given expression"""

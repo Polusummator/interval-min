@@ -1,4 +1,4 @@
-from .forward_differentiation import ForwardGradientEvaluator
+from interval_differentiation import ForwardGradientEvaluator
 from .helpers import calculate_centred_form
 from .interval_extension import IntervalExtension
 from mp_exp import intersect, Interval
