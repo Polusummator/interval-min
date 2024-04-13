@@ -7,8 +7,8 @@ interval_operations = {'exp': exp, 'log': log, 'factorial': factorial}
 
 
 class NaturalExtension(IntervalExtension):
-    def __init__(self, variables, expr: str, gradient_evaluator = None):
-        self.extension = FunctionEvaluator(variables, expr, interval_operations)
+    def __init__(self, expr: str, variable_names, gradient_evaluator = None):
+        self.extension = FunctionEvaluator(expr, variable_names, interval_operations)
 
     def evaluate(self, variables):
         return self.extension.evaluate(variables)

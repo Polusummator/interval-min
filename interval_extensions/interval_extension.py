@@ -6,7 +6,7 @@ from mp_exp import Interval
 class IntervalExtension(abc.ABC):
 
     @abc.abstractmethod
-    def __init__(self, variables, expr: str, gradient_evaluator):
+    def __init__(self, expr: str, variable_names, gradient_evaluator):
         """Initialize an interval extension of expr"""
 
     @abc.abstractmethod

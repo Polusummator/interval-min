@@ -5,9 +5,9 @@ from mp_exp import Interval
 
 
 class CentredForm(IntervalExtension):
-    def __init__(self, variables: dict, expr: str, gradient_evaluator):
-        self.extension = NaturalExtension(variables, expr)
-        self.gradient_evaluator = gradient_evaluator(variables, expr)
+    def __init__(self, expr: str, variable_names, gradient_evaluator):
+        self.extension = NaturalExtension(expr, variable_names)
+        self.gradient_evaluator = gradient_evaluator(expr, variable_names)
 
     def evaluate(self, variables: dict[str, Interval]) -> Interval:
         centre = dict()

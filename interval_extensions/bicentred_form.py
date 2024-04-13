@@ -14,10 +14,10 @@ def cut(value, cut_interval):
 
 
 class BicentredForm(IntervalExtension):
-    def __init__(self, variables: dict, expr: str, gradient_evaluator):
-        self.extension = NaturalExtension(variables, expr)
-        self.p_gradient_evaluator = ForwardGradientEvaluator(variables, expr)
-        self.gradient_evaluator = gradient_evaluator(variables, expr)
+    def __init__(self, expr: str, variable_names, gradient_evaluator):
+        self.extension = NaturalExtension(expr, variable_names)
+        self.p_gradient_evaluator = ForwardGradientEvaluator(expr, variable_names)
+        self.gradient_evaluator = gradient_evaluator(expr, variable_names)
 
     def evaluate(self, variables: dict):
         p_gradient = self.p_gradient_evaluator.evaluate(variables)

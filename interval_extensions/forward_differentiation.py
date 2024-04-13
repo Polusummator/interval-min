@@ -91,8 +91,8 @@ derivative_pair_operations = {'exp': pair_exp, 'log': pair_log, 'factorial': pai
 
 
 class ForwardGradientEvaluator:
-    def __init__(self, variables: dict, expr: str):
-        self.gradient_evaluator = FunctionEvaluator(variables, expr, derivative_pair_operations)
+    def __init__(self, expr: str, variable_names):
+        self.gradient_evaluator = FunctionEvaluator(expr, variable_names, derivative_pair_operations)
 
     def evaluate(self, variables: dict):
         gradient = dict()

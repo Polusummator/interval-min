@@ -104,8 +104,8 @@ slope_tuple_operations = {'exp': slope_exp, 'log': slope_log, 'factorial': slope
 
 
 class ForwardSlopeEvaluator:
-    def __init__(self, variables: dict, expr: str):
-        self.gradient_evaluator = FunctionEvaluator(variables, expr, slope_tuple_operations)
+    def __init__(self, expr: str, variable_names):
+        self.gradient_evaluator = FunctionEvaluator(expr, variable_names, slope_tuple_operations)
 
     def evaluate(self, variables: dict, point: dict):
         slopes = dict()
