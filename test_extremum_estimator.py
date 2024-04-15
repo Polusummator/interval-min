@@ -18,7 +18,6 @@ class TestData:
     func: str
     intervals: dict[str, Interval]
     precision: Decimal
-    extremum_type: str
     answer: Decimal
 
 
@@ -37,8 +36,8 @@ def construct_test(row):
     for variable_name, a, b in parsed_input:
         intervals[variable_name] = Interval(Decimal(a), Decimal(b))
     return TestData(name=row["Test name"], func=row["Function"],
-                    extremum_type=row["Extr"], answer=Decimal(row["Correct"]),
-                    intervals=intervals, precision=Decimal(row["Precision"]))
+                    answer=Decimal(row["Correct"]), intervals=intervals,
+                    precision=Decimal(row["Precision"]))
 
 
 class TestExtr(unittest.TestCase):
@@ -48,8 +47,8 @@ class TestExtr(unittest.TestCase):
     @timeout_decorator.timeout(TIMEOUT)
     def test(self, test, extension, method, diff):
         result = get_extremum_estimation(test.func, test.intervals,
-                                         test.extremum_type, test.precision,
-                                         extension, method, diff)
+                                         test.precision, extension,
+                                         method, diff)
         difference = abs(test.answer - result)
         message = (f"expected: {test.answer}, actual: {result}.\n"
                    f"difference > precision: {difference} > {test.precision}")

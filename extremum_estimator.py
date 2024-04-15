@@ -16,10 +16,9 @@ DIFFS = {"sympy_forward_mode": SympyGradientEvaluator,
          "slopes_forward_mode": ForwardSlopeEvaluator}
 
 
-def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_type: str = "min",
+def get_extremum_estimation(func: str, func_args: dict[str, Interval],
                             precision: Decimal = Decimal("0.000001"), extension: str = "natural",
-                            method: str = "moore_skelboe",
-                            diff: str = "sympy_forward_mode") -> Decimal:
+                            method: str = "moore_skelboe", diff: str = "sympy_forward_mode") -> Decimal:
     """Estimate interval for a given function with a given precision
 
     Parameters
@@ -28,8 +27,6 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
         function to be evaluated
     func_args : dict[str, Interval]
         A dictionary containing variable strings and corresponding intervals
-    extremum_type : str
-        Should be one of 'min', 'max'
     precision : int
         The least needed precision
     extension : str
@@ -50,20 +47,13 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval], extremum_
 
     parsed_function = _parse_function(func)
     interval_extension = _parse_extension_type(extension)(parsed_function, func_args.keys(), DIFFS[diff])
-    extremum_type = _parse_extremum_type(extremum_type)
-    method_obj = _parse_method(method)(func, func_args, interval_extension, precision, extremum_type)
+    method_obj = _parse_method(method)(func, func_args, interval_extension, precision)
 
     if not parsed_function.free_symbols:
         return Decimal(str(parsed_function.evalf(calculation_scale)))
 
     variable_interval = method_obj.calculate()
     return interval_extension.evaluate(variable_interval).a
-
-
-def _parse_extremum_type(extremum_type: str) -> str:
-    if extremum_type == "min" or extremum_type == "max":
-        return extremum_type
-    raise SyntaxError("Unexpected argument given as an extremum type")
 
 
 def _parse_extension_type(extension: str):

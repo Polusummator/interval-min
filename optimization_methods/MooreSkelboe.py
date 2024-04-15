@@ -8,14 +8,12 @@ from interval_extensions import NaturalExtension
 
 
 class MooreSkelboe:
-    def __init__(self, func: str, func_args: dict[str, Interval], interval_extension, precision: Decimal,
-                 extremum_type: str) -> None:
+    def __init__(self, func: str, func_args: dict[str, Interval], interval_extension, precision: Decimal) -> None:
         self.func = func
         self.func_args = func_args
         self.interval_extension = interval_extension
         self.answer_precision = precision
         self.calculation_scale = get_scale(precision)
-        self.extremum_type = extremum_type
 
         self.gradient_calculator = SympyGradientEvaluator(func, func_args)
         self.natural_extension = NaturalExtension(func, list(func_args))
@@ -32,7 +30,7 @@ class MooreSkelboe:
             check_needed = False
             for cell in new_cells:
                 midpoint_value = self._calculate_mid_value(cell)
-                if (self.extremum_type == "min" and midpoint_value < self.extremum_bound) or (self.extremum_type == "max" and midpoint_value > self.extremum_bound):
+                if midpoint_value < self.extremum_bound:
                     self.extremum_bound = midpoint_value
                     check_needed = True
                 self.cells.add(cell)
@@ -59,9 +57,7 @@ class MooreSkelboe:
             self.calculation_scale += 1
 
     def _get_sorted_list(self):
-        if self.extremum_type == "min":
-            return SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
-        return SortedList(key=lambda x: -self.interval_extension.evaluate(x).b)
+        return SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
 
     def _get_max_speed_variable(self, domain: dict[str, Interval]) -> str:
         max_speed_variable = ""
@@ -85,7 +81,7 @@ class MooreSkelboe:
         checked_cells = self._get_sorted_list()
         for cell in self.cells:
             cell_evaluation = self.interval_extension.evaluate(cell)
-            if (self.extremum_type == "min" and cell_evaluation.a <= self.extremum_bound) or (self.extremum_type == "max" and cell_evaluation.b >= self.extremum_bound):
+            if cell_evaluation.a <= self.extremum_bound:
                 checked_cells.add(cell)
         self.cells = checked_cells
 
