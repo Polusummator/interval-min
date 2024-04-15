@@ -3,8 +3,15 @@ from sortedcontainers import SortedList
 from helpers import get_scale
 from decimal import Decimal
 
+from dataclasses import dataclass
 from interval_differentiation.sympy_diffentiation import SympyGradientEvaluator
 from interval_extensions import NaturalExtension
+
+
+@dataclass(frozen=True)
+class _Cell:
+    lower_bound: Decimal
+    domain: dict[str, Interval]
 
 
 class MooreSkelboe:
@@ -19,24 +26,24 @@ class MooreSkelboe:
         self.natural_extension = NaturalExtension(func, list(func_args))
         self.extremum_bound = self._calculate_mid_value(func_args)
 
-        self.cells = self._get_sorted_list()
-        self.cells.add(func_args)
+        self.cells = SortedList(key=lambda x: x.lower_bound)
+        self.cells.add(_Cell(interval_extension.evaluate(func_args).a, func_args))
 
     def calculate(self):
-        while self.interval_extension.evaluate(current_cell := self.cells[0]).wid >= self.answer_precision:
-            max_speed_variable = self._get_max_speed_variable(current_cell)
-            new_cells = self._split_domain(current_cell, max_speed_variable)
+        while self.interval_extension.evaluate((current_cell := self.cells[0]).domain).wid >= self.answer_precision:
+            max_speed_variable = self._get_max_speed_variable(current_cell.domain)
+            new_domains = self._split_domain(current_cell.domain, max_speed_variable)
             self.cells.pop(0)
             check_needed = False
-            for cell in new_cells:
-                midpoint_value = self._calculate_mid_value(cell)
+            for domain in new_domains:
+                midpoint_value = self._calculate_mid_value(domain)
                 if midpoint_value < self.extremum_bound:
                     self.extremum_bound = midpoint_value
                     check_needed = True
-                self.cells.add(cell)
+                self.cells.add(_Cell(self.interval_extension.evaluate(domain).a, domain))
             if check_needed:
                 self._check_list()
-        return self.cells[0]
+        return self.cells[0].lower_bound
 
     def _split_domain(self, domain: dict[str, Interval], variable: str) -> list[dict]:
         split_interval = domain[variable]
@@ -55,9 +62,6 @@ class MooreSkelboe:
         if get_scale(interval.wid) <= self.calculation_scale:
             set_precision(self.calculation_scale + 5)
             self.calculation_scale += 1
-
-    def _get_sorted_list(self):
-        return SortedList(key=lambda x: self.interval_extension.evaluate(x).a)
 
     def _get_max_speed_variable(self, domain: dict[str, Interval]) -> str:
         max_speed_variable = ""
@@ -78,10 +82,5 @@ class MooreSkelboe:
         return mid_value.a  # mid_value.a == mid_value.b
 
     def _check_list(self):
-        checked_cells = self._get_sorted_list()
-        for cell in self.cells:
-            cell_evaluation = self.interval_extension.evaluate(cell)
-            if cell_evaluation.a <= self.extremum_bound:
-                checked_cells.add(cell)
-        self.cells = checked_cells
-
+        index = self.cells.bisect_right(_Cell(self.extremum_bound, {}))
+        del self.cells[index:]

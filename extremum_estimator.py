@@ -51,9 +51,7 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval],
 
     if not parsed_function.free_symbols:
         return Decimal(str(parsed_function.evalf(calculation_scale)))
-
-    variable_interval = method_obj.calculate()
-    return interval_extension.evaluate(variable_interval).a
+    return method_obj.calculate()
 
 
 def _parse_extension_type(extension: str):
