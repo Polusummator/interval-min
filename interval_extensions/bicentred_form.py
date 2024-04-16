@@ -1,6 +1,13 @@
+"""
+Implements bicentred form.
+
+Implementation is based on a book
+Шарый СП. Конечномерный интервальный анализ. Новосибирск: ИВТ СО РАН. 2010.
+"""
+
+from mp_exp import intersect, Interval
 from .helpers import calculate_centred_form, get_centre
 from .interval_extension import IntervalExtension
-from mp_exp import intersect, Interval
 from .natural_extension import NaturalExtension
 
 
@@ -21,17 +28,19 @@ class BicentredForm(IntervalExtension):
         p_gradient = self.gradient_evaluator.evaluate(variables, get_centre(variables))
         p = self._get_p(p_gradient)
 
-        centre = self._get_centre(variables, p, 1)
-        gradient = self.gradient_evaluator.evaluate(variables, centre)
-        lower_form = calculate_centred_form(variables, centre, gradient, self.extension)
+        lower_centre = self._get_centre(variables, p, 1)
+        lower_gradient = self.gradient_evaluator.evaluate(variables, lower_centre)
+        lower_form = calculate_centred_form(variables, lower_centre, lower_gradient, self.extension)
 
-        centre = self._get_centre(variables, p, -1)
-        gradient = self.gradient_evaluator.evaluate(variables, centre)
-        upper_form = calculate_centred_form(variables, centre, gradient, self.extension)
+        upper_centre = self._get_centre(variables, p, -1)
+        upper_gradient = self.gradient_evaluator.evaluate(variables, upper_centre)
+        upper_form = calculate_centred_form(variables, upper_centre, upper_gradient, self.extension)
 
         return intersect(lower_form, upper_form)
 
     def _get_p(self, gradient):
+        """Calculate p from Baumann's theorem"""
+
         p = dict()
         for variable, interval in gradient.items():
             mid = interval.mid
@@ -43,6 +52,8 @@ class BicentredForm(IntervalExtension):
         return p
 
     def _get_centre(self, variables: dict, p: dict, sign):
+        """Calculate c_{*} or c^{*} from Baumann's theorem"""
+
         centre = dict()
         for variable, interval in variables.items():
             centre[variable] = Interval.to_interval(interval.mid + p[variable] * interval.rad * sign)

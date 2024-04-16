@@ -1,4 +1,9 @@
+"""
+Implements interval differential arithmetic.
+"""
+
 from decimal import Decimal
+
 from interval_extensions.function_evaluator import FunctionEvaluator
 from mp_exp import Interval, exp, log
 from .slope_evaluator import SlopeEvaluator
@@ -6,9 +11,10 @@ from .slope_evaluator import SlopeEvaluator
 
 class DerivativePair:
     """
-    A class that represents a value and a derivative of a function.
+    A pair of a value and a derivative of a function.
 
-    This class is ment to be used with SymPy
+    Objects of this class are ment to be passed to a sympy function as values to
+    calculate derivatives.
     """
 
     def __init__(self, value, derivative=Interval(0, 0)):
@@ -17,6 +23,7 @@ class DerivativePair:
 
     @classmethod
     def to_pair(cls, other):
+        """Construct a derivative pari from other types"""
         if type(other) is Decimal or type(other) is Interval:
             return DerivativePair(other)
         elif type(other) is int or type(other) is float:
@@ -92,13 +99,21 @@ derivative_pair_operations = {'exp': pair_exp, 'log': pair_log, 'factorial': pai
 
 
 class ForwardGradientEvaluator(SlopeEvaluator):
+    """
+    Evaluates a dictionary of slopes for a given function.
+
+    Evaluation is implemented using forward pass.
+    """
+
     def __init__(self, expr: str, variable_names):
         self.gradient_evaluator = FunctionEvaluator(expr, variable_names, derivative_pair_operations)
 
     def evaluate(self, variables: dict, point=None):
+        """Get a dictionary of derivatives over a given interval with respect to a given point"""
         gradient = dict()
         derivative_pairs = {variable: DerivativePair(interval) for variable, interval in variables.items()}
         for variable, interval in variables.items():
+            # calculate each partial derivative
             derivative_pairs[variable].derivative = Interval.to_interval(1)
             gradient[variable] = self.gradient_evaluator.evaluate(derivative_pairs).derivative
             derivative_pairs[variable].derivative = Interval.to_interval(0)

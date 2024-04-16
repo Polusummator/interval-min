@@ -8,5 +8,7 @@ def calculate_centred_form(variables: dict, centre: dict, gradient: dict, extens
     return result
 
 
-def get_centre(variables: dict):
+def get_centre(variables: dict) -> dict:
+    """Get centre of a box"""
+
     return {variable: interval.mid_interval for variable, interval in variables.items()}
