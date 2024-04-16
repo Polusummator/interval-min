@@ -1,11 +1,17 @@
 import sympy
 
-from mp_exp import Interval
 from interval_extensions.natural_extension import NaturalExtension
+from mp_exp import Interval
 from .slope_evaluator import SlopeEvaluator
 
 
 class SympyGradientEvaluator(SlopeEvaluator):
+    """
+    Evaluates interval derivatives using sympy.diff function.
+
+    Differentiation is performed during __init__.
+    """
+
     def __init__(self, expr: str, variable_names):
         self.gradient = dict()
         for variable_name in variable_names:

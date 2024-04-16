@@ -1,3 +1,7 @@
+"""
+Provides a method to estimate of a function over a given box
+"""
+
 from decimal import Decimal
 
 import sympy

@@ -1,7 +1,14 @@
-from .natural_extension import NaturalExtension
+"""
+Implements centred form.
+
+Implementation is based on a book
+Шарый СП. Конечномерный интервальный анализ. Новосибирск: ИВТ СО РАН. 2010.
+"""
+
+from mp_exp import Interval
 from .helpers import calculate_centred_form, get_centre
 from .interval_extension import IntervalExtension
-from mp_exp import Interval
+from .natural_extension import NaturalExtension
 
 
 class CentredForm(IntervalExtension):
