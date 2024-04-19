@@ -9,7 +9,7 @@ Applied Mathematics and Computation 39.1 (1990): 89-105.
 
 from decimal import Decimal
 
-from interval_extensions.function_evaluator import FunctionEvaluator
+from interval_inclusions.function_evaluator import FunctionEvaluator
 from mp_exp import Interval, exp, log
 from .forward_differentiation import DerivativePair, pair_exp, pair_log
 from .slope_evaluator import SlopeEvaluator

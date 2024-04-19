@@ -7,8 +7,8 @@ Implementation is based on a book
 
 from mp_exp import intersect, Interval
 from .helpers import calculate_centred_form, get_centre
-from .interval_extension import IntervalExtension
-from .natural_extension import NaturalExtension
+from .interval_inclusion import IntervalInclusion
+from .natural_inclusion import NaturalInclusion
 
 
 def cut(value, cut_interval):
@@ -19,9 +19,9 @@ def cut(value, cut_interval):
     return value
 
 
-class BicentredForm(IntervalExtension):
+class BicentredForm(IntervalInclusion):
     def __init__(self, expr: str, variable_names, gradient_evaluator):
-        self.extension = NaturalExtension(expr, variable_names)
+        self.extension = NaturalInclusion(expr, variable_names)
         self.gradient_evaluator = gradient_evaluator(expr, variable_names)
 
     def evaluate(self, variables: dict):

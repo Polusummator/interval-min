@@ -3,7 +3,7 @@ import abc
 from mp_exp import Interval
 
 
-class IntervalExtension(abc.ABC):
+class IntervalInclusion(abc.ABC):
 
     @abc.abstractmethod
     def __init__(self, expr: str, variable_names, gradient_evaluator):
