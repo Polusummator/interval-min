@@ -4,7 +4,7 @@ Implements interval differential arithmetic.
 
 from decimal import Decimal
 
-from interval_extensions.function_evaluator import FunctionEvaluator
+from interval_inclusions.function_evaluator import FunctionEvaluator
 from mp_exp import Interval, exp, log
 from .slope_evaluator import SlopeEvaluator
 

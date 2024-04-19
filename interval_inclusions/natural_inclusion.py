@@ -1,11 +1,11 @@
 from mp_exp import exp, log, factorial
 from .function_evaluator import FunctionEvaluator
-from .interval_extension import IntervalExtension
+from .interval_inclusion import IntervalInclusion
 
 interval_operations = {'exp': exp, 'log': log, 'factorial': factorial}
 
 
-class NaturalExtension(IntervalExtension):
+class NaturalInclusion(IntervalInclusion):
     def __init__(self, expr: str, variable_names, gradient_evaluator=None):
         """
         Parameters
