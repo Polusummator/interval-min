@@ -5,7 +5,7 @@ from decimal import Decimal
 
 from dataclasses import dataclass
 from interval_differentiation.sympy_diffentiation import SympyGradientEvaluator
-from interval_extensions import NaturalExtension
+from interval_inclusions import NaturalInclusion
 
 
 @dataclass(frozen=True)
@@ -23,7 +23,7 @@ class MooreSkelboe:
         self.calculation_scale = get_scale(precision)
 
         self.gradient_calculator = SympyGradientEvaluator(func, func_args)
-        self.natural_extension = NaturalExtension(func, list(func_args))
+        self.natural_extension = NaturalInclusion(func, list(func_args))
         self.extremum_bound = self._calculate_mid_value(func_args)
 
         self.cells = SortedList(key=lambda x: x.lower_bound)
