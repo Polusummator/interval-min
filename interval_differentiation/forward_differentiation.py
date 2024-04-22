@@ -60,16 +60,16 @@ class DerivativePair:
         return DerivativePair(value, derivative)
 
     def __radd__(self, other):
-        return self.__add__(other)
+        return self + other
 
     def __rsub__(self, other):
-        return self.__sub__(other)
+        return (-self) + other
 
     def __rmul__(self, other):
-        return self.__mul__(other)
+        return self * other
 
     def __rtruediv__(self, other):
-        return self.__truediv__(other)
+        return DerivativePair.to_pair(other) / self
 
 
 def pair_log(pair: DerivativePair):

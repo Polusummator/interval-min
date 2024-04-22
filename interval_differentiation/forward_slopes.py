@@ -67,16 +67,16 @@ class SlopeTuple:
         return SlopeTuple(value1, value2, slope)
 
     def __radd__(self, other):
-        return self.__add__(other)
+        return self + other
 
     def __rsub__(self, other):
-        return self.__sub__(other)
+        return (-self) + other
 
     def __rmul__(self, other):
-        return self.__mul__(other)
+        return self * other
 
     def __rtruediv__(self, other):
-        return self.__truediv__(other)
+        return SlopeTuple.to_slope(other) / self
 
 
 def slope_log(slope_tuple: SlopeTuple):
