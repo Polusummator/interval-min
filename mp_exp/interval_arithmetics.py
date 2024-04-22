@@ -43,28 +43,21 @@ def set_precision(prec):
 
 
 def _set_rounding_mode(rounding_mode):
-    prev = dec.getcontext().rounding
     dec.getcontext().rounding = rounding_mode
-    return prev
 
 
 def _set_rounding_mode_default():
-    return _set_rounding_mode(dec.ROUND_HALF_EVEN)
+    _set_rounding_mode(dec.ROUND_HALF_EVEN)
 
 
 def _set_rounding_mode_ceil():
-    return _set_rounding_mode(dec.ROUND_CEILING)
+    _set_rounding_mode(dec.ROUND_CEILING)
 
 
 def _set_rounding_mode_floor():
-    return _set_rounding_mode(dec.ROUND_FLOOR)
+    _set_rounding_mode(dec.ROUND_FLOOR)
 
 
-def _my_mul(a, b):
-    if (a == c_zero) or (b == c_zero):
-        return c_zero
-    else:
-        return a * b
 
 
 def _my_div(a, b):
@@ -134,16 +127,16 @@ class Interval:
     def __mul__(self, other):
         nother = Interval.to_interval(other)
         _set_rounding_mode_floor()
-        aa = _my_mul(self.a, nother.a)
-        ab = _my_mul(self.a, nother.b)
-        ba = _my_mul(self.b, nother.a)
-        bb = _my_mul(self.b, nother.b)
+        aa = self.a * nother.a
+        ab = self.a * nother.b
+        ba = self.b * nother.a
+        bb = self.b * nother.b
         a = min(aa, ab, ba, bb)
         _set_rounding_mode_ceil()
-        aa = _my_mul(self.a, nother.a)
-        ab = _my_mul(self.a, nother.b)
-        ba = _my_mul(self.b, nother.a)
-        bb = _my_mul(self.b, nother.b)
+        aa = self.a * nother.a
+        ab = self.a * nother.b
+        ba = self.b * nother.a
+        bb = self.b * nother.b
         b = max(aa, ab, ba, bb)
         return Interval(a, b)
 
