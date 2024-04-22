@@ -86,13 +86,11 @@ class Interval:
         Returns Interval if Interval is given.
         """
 
-        if type(other) is dec.Decimal:
-            return Interval(other, other)
-        elif type(other) is int or type(other) is float:
-            v = dec.Decimal(other)
-            return Interval(v, v)
-        else:
+        if isinstance(other, Interval):
             return other
+
+        value = dec.Decimal(other)
+        return Interval(value, value)
 
     def __init__(self, a: dec.Decimal, b: dec.Decimal):
         """
