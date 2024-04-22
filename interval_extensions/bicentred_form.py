@@ -1,3 +1,4 @@
+from decimal import Decimal
 from .helpers import calculate_centred_form, get_centre
 from .interval_extension import IntervalExtension
 from mp_exp import intersect, Interval
@@ -39,7 +40,7 @@ class BicentredForm(IntervalExtension):
             if rad == 0:
                 p[variable] = 1  # if rad is 0, this value is not used
             else:
-                p[variable] = cut(mid / rad, Interval(-1, 1))
+                p[variable] = cut(mid / rad, Interval(Decimal(-1), Decimal(1)))
         return p
 
     def _get_centre(self, variables: dict, p: dict, sign):

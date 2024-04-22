@@ -94,7 +94,7 @@ class Interval:
         else:
             return other
 
-    def __init__(self, a: dec.Decimal | float | int, b: dec.Decimal | float | int):
+    def __init__(self, a: dec.Decimal, b: dec.Decimal):
         """
         Constructor
 
@@ -104,11 +104,8 @@ class Interval:
         b : interval's right end
 
         """
-        if isinstance(a, (dec.Decimal, float, int)) and isinstance(b, (dec.Decimal, float, int)):
-            self.a = dec.Decimal(a)
-            self.b = dec.Decimal(b)
-        else:
-            raise TypeError("Interval constructor's arguments must be instances of Decimal")
+        self.a = a
+        self.b = b
 
     def __neg__(self):
         _set_rounding_mode_floor()

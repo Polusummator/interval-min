@@ -11,7 +11,7 @@ class DerivativePair:
     This class is ment to be used with SymPy
     """
 
-    def __init__(self, value, derivative=Interval(0, 0)):
+    def __init__(self, value, derivative=Interval(Decimal(0), Decimal(0))):
         self.value = Interval.to_interval(value)
         self.derivative = Interval.to_interval(derivative)
 

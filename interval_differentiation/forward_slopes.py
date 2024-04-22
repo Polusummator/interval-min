@@ -6,7 +6,7 @@ from .slope_evaluator import SlopeEvaluator
 
 
 class SlopeTuple:
-    def __init__(self, value1, value2=None, slope=Interval(0, 0)):
+    def __init__(self, value1, value2=None, slope=Interval(Decimal(0), Decimal(0))):
         if not value2:
             value2 = value1
         self.value1 = Interval.to_interval(value1)
