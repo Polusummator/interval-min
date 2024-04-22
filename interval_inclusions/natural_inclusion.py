@@ -15,10 +15,10 @@ class NaturalInclusion(IntervalInclusion):
         variable_names : list
             A list of variable names.
         gradient_evaluator:
-            Is not used in natural extension.
+            Is not used in natural inclosure.
         """
 
-        self.extension = FunctionEvaluator(expr, variable_names, interval_operations)
+        self.inclosure = FunctionEvaluator(expr, variable_names, interval_operations)
 
     def evaluate(self, variables):
-        return self.extension.evaluate(variables)
+        return self.inclosure.evaluate(variables)

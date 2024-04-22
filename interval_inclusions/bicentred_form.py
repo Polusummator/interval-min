@@ -21,7 +21,7 @@ def cut(value, cut_interval):
 
 class BicentredForm(IntervalInclusion):
     def __init__(self, expr: str, variable_names, gradient_evaluator):
-        self.extension = NaturalInclusion(expr, variable_names)
+        self.inclosure = NaturalInclusion(expr, variable_names)
         self.gradient_evaluator = gradient_evaluator(expr, variable_names)
 
     def evaluate(self, variables: dict):
@@ -30,11 +30,11 @@ class BicentredForm(IntervalInclusion):
 
         lower_centre = self._get_centre(variables, p, 1)
         lower_gradient = self.gradient_evaluator.evaluate(variables, lower_centre)
-        lower_form = calculate_centred_form(variables, lower_centre, lower_gradient, self.extension)
+        lower_form = calculate_centred_form(variables, lower_centre, lower_gradient, self.inclosure)
 
         upper_centre = self._get_centre(variables, p, -1)
         upper_gradient = self.gradient_evaluator.evaluate(variables, upper_centre)
-        upper_form = calculate_centred_form(variables, upper_centre, upper_gradient, self.extension)
+        upper_form = calculate_centred_form(variables, upper_centre, upper_gradient, self.inclosure)
 
         return intersect(lower_form, upper_form)
 

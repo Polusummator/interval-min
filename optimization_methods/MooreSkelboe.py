@@ -15,22 +15,22 @@ class _Cell:
 
 
 class MooreSkelboe:
-    def __init__(self, func: str, func_args: dict[str, Interval], interval_extension, precision: Decimal) -> None:
+    def __init__(self, func: str, func_args: dict[str, Interval], interval_inclosure, precision: Decimal) -> None:
         self.func = func
         self.func_args = func_args
-        self.interval_extension = interval_extension
+        self.interval_inclosure = interval_inclosure
         self.answer_precision = precision
         self.calculation_scale = get_scale(precision)
 
         self.gradient_calculator = SympyGradientEvaluator(func, func_args)
-        self.natural_extension = NaturalInclusion(func, list(func_args))
+        self.natural_inclusion = NaturalInclusion(func, list(func_args))
         self.extremum_bound = self._calculate_mid_value(func_args)
 
         self.cells = SortedList(key=lambda x: x.lower_bound)
-        self.cells.add(_Cell(interval_extension.evaluate(func_args).a, func_args))
+        self.cells.add(_Cell(interval_inclosure.evaluate(func_args).a, func_args))
 
     def calculate(self):
-        while self.interval_extension.evaluate((current_cell := self.cells[0]).domain).wid >= self.answer_precision:
+        while self.interval_inclosure.evaluate((current_cell := self.cells[0]).domain).wid >= self.answer_precision:
             max_speed_variable = self._get_max_speed_variable(current_cell.domain)
             new_domains = self._split_domain(current_cell.domain, max_speed_variable)
             self.cells.pop(0)
@@ -40,7 +40,7 @@ class MooreSkelboe:
                 if midpoint_value < self.extremum_bound:
                     self.extremum_bound = midpoint_value
                     check_needed = True
-                self.cells.add(_Cell(self.interval_extension.evaluate(domain).a, domain))
+                self.cells.add(_Cell(self.interval_inclosure.evaluate(domain).a, domain))
             if check_needed:
                 self._check_list()
         return self.cells[0].lower_bound
@@ -78,7 +78,7 @@ class MooreSkelboe:
         mid_point = dict()
         for variable in domain.items():
             mid_point[variable[0]] = variable[1].mid_interval
-        mid_value = self.natural_extension.evaluate(mid_point)
+        mid_value = self.natural_inclusion.evaluate(mid_point)
         return mid_value.a  # mid_value.a == mid_value.b
 
     def _check_list(self):

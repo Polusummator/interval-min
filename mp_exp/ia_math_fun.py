@@ -8,7 +8,7 @@ import mp_exp.interval_arithmetics as ia
 
 def factorial(n):
     """
-    Computes interval extension for a factorial function
+    Computes interval inclosure for a factorial function
     
     Parameters
     ----------

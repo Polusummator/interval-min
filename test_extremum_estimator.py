@@ -6,7 +6,7 @@ import timeout_decorator
 import pandas as pd
 from parameterized import parameterized
 import re
-from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS, DIFFS
+from extremum_estimator import get_extremum_estimation, INCLUSIONS, METHODS, DIFFS
 from mp_exp import Interval
 
 TIMEOUT = 5
@@ -43,11 +43,11 @@ def construct_test(row):
 class TestExtr(unittest.TestCase):
 
     @parameterized.expand(product([construct_test(row) for index, row in TEST_TABLE.iterrows()],
-                                  EXTENSIONS, METHODS, DIFFS), name_func=custom_name_func)
+                                  INCLUSIONS, METHODS, DIFFS), name_func=custom_name_func)
     @timeout_decorator.timeout(TIMEOUT)
-    def test(self, test, extension, method, diff):
+    def test(self, test, inclosure, method, diff):
         result = get_extremum_estimation(test.func, test.intervals,
-                                         test.precision, extension,
+                                         test.precision, inclosure,
                                          method, diff)
         difference = abs(test.answer - result)
         message = (f"expected: {test.answer}, actual: {result}.\n"
