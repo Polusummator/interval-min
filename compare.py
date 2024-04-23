@@ -15,6 +15,7 @@ from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS, DIF
 from mp_exp import Interval
 
 TIMEOUT = 5
+amount = 20
 a = []
 
 
@@ -76,7 +77,7 @@ def do_it():
     method = "moore_skelboe"
     index = 0
 
-    for _ in range(20):
+    for _ in range(amount):
         i = dict()
         i['x'] = Interval(-10, 10)
         f = generate()
@@ -84,7 +85,7 @@ def do_it():
                         answer=decimal.Decimal(0), intervals=i,
                         precision=decimal.Decimal('0.01'))
         x = []
-        print(f)
+        # print(f)
         for extension in EXTENSIONS.keys():
             for diff in DIFFS.keys():
                 try:
@@ -92,39 +93,39 @@ def do_it():
                     result = limited_extremum_estimation_execution(test, extension, method, diff)
                     real_time = time.time() - t
                     x.append(real_time)
-                    print(f"method: {method}\nextension: {extension}\ndiff: {diff}\nstatus: passed\ntest name: {index}\ntime: {real_time}")
-                    print()
+                    # print(f"method: {method}\nextension: {extension}\ndiff: {diff}\nstatus: passed\ntest name: {index}\ntime: {real_time}")
+                    # print()
                 except:
                     x.append(None)
-                    print(f"method: {method}\nextension: {extension}\ndiff: {diff}\nstatus: failed\ntest name: {index}\ntime: infinity")
-                    print()
+                    # print(f"method: {method}\nextension: {extension}\ndiff: {diff}\nstatus: failed\ntest name: {index}\ntime: infinity")
+                    # print()
                 index += 1
         values.append(x)
 
 
 do_it()
-max_time = [-1, -1, -1, -1, -1, -1]
-min_time = [10000, 10000, 10000, 10000, 10000, 10000]
-middle = [[20, 0], [20, 0], [20, 0], [20, 0], [20, 0], [20, 0]]
+max_time = [-1] * (len(EXTENSIONS) * len(DIFFS))
+min_time = [10000] * (len(EXTENSIONS) * len(DIFFS))
+middle = [[amount, 0] for _ in range(len(EXTENSIONS) * len(DIFFS))]
 for x in values:
-    print(x)
-    for i in range(0, 6):
+    # print(x)
+    for i in range(0, len(EXTENSIONS) * len(DIFFS)):
         if x[i] is None:
             middle[i][0] -= 1
             continue
         max_time[i] = max(max_time[i], x[i])
         min_time[i] = min(min_time[i], x[i])
         middle[i][1] += x[i]
-print(middle)
+# print(middle)
 average = []
 failures = []
 
 for x in middle:
-    print(x[1] / x[0])
+    # print(x[1] / x[0])
     average.append(x[1] / x[0])
-    failures.append(20 - x[0])
+    failures.append(amount - x[0])
 
-objects = ('natural\nsympy_forward_mode', 'natural\nslopes_forward_mode', 'centred_form\nsympy_forward_mode', 'centred_form\nslopes_forward_mode', 'bicentred_form\nsympy_forward_mode', 'bicentred_form\nslopes_forward_mode')
+objects = [x + '\n' + y for x in EXTENSIONS for y in DIFFS]
 y_pos = np.arange(len(objects))
 
 plt.subplot(221)
