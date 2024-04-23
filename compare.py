@@ -13,6 +13,7 @@ from mp_exp import Interval
 TIMEOUT = 10
 amount = 20
 a = []
+failed_func = set()
 
 
 @dataclass(init=True)
@@ -54,7 +55,10 @@ def generate(argzz):
             c_arg = 'z'
             if len(f) != 0:
                 f += ' + '
-        f += "(" + koefk[0] + f") * {c_arg}**(" + degk[0] + ")"
+        if koefk[0] != '0':
+            f += "(" + koefk[0] + f") * {c_arg}**(" + degk[0] + ")"
+        else:
+            f += '0'
         for i in range(1, m):
             if koefk[i] == '0':
                 continue
@@ -128,6 +132,7 @@ def do_it():
                     # print(f"method: {method}\nextension: {extension}\ndiff: {diff}\nstatus: passed\ntest name: {index}\ntime: {real_time}")
                     # print()
                 except:
+                    failed_func.add(f)
                     x.append(None)
                     # print(f"method: {method}\nextension: {extension}\ndiff: {diff}\nstatus: failed\ntest name: {index}\ntime: infinity")
                     # print()
@@ -137,6 +142,9 @@ def do_it():
 
 
 do_it()
+# for f in failed_func:
+#     with open('failed_functions.txt', 'a') as file:
+#         file.write(f + '\n')
 max_time = [-1] * (len(EXTENSIONS) * len(DIFFS))
 min_time = [10000] * (len(EXTENSIONS) * len(DIFFS))
 middle = [[amount, 0] for _ in range(len(EXTENSIONS) * len(DIFFS))]
