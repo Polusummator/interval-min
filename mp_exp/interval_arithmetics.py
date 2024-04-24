@@ -314,3 +314,13 @@ def intersect(ival1, ival2):
         a = max(ival1.a, ival2.a)
         b = min(ival1.b, ival2.b)
         return Interval(a, b)
+
+
+def is_in(val1, val2):
+    ival1 = val1
+    ival2 = val2
+    if not(type(val1) is Interval):
+        ival1 = Interval.to_interval(val1)
+    if not(type(val2) is Interval):
+        ival2 = Interval.to_interval(val2)
+    return ival1.a >= ival2.a and ival1.b <= ival2.b
