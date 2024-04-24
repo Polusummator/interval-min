@@ -5,6 +5,7 @@ parameterized>=0.9.0
 parametrized>=66.0.2
 python-dateutil>=2.9.0.post0
 pytz>=2024.1
+scipy>=1.13.0
 six>=1.16.0
 sortedcontainers>=2.4.0
 sympy>=1.12
