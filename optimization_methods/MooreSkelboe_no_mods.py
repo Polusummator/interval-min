@@ -4,13 +4,14 @@ from helpers import get_scale
 from decimal import Decimal
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class _Cell:
     lower_bound: Decimal
     domain: dict[str, Interval]
 
 
-class MooreSkelboe:
+class MooreSkelboe_no_mods:
     def __init__(self, func: str, func_args: dict[str, Interval], interval_extension, precision: Decimal) -> None:
         self.func = func
         self.func_args = func_args
