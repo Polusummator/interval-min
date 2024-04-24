@@ -21,7 +21,7 @@ class TestData:
     answer: Decimal
 
 
-TEST_TABLE = pd.read_csv('test_extremum_estimator.csv', dtype=str).fillna("")
+TEST_TABLE = pd.read_csv('./tests/test_extremum_estimator.csv', dtype=str).fillna("")
 # TEST_TABLE = TEST_TABLE[TEST_TABLE["Test name"] == "test_01"]
 
 
