@@ -6,9 +6,10 @@ from helpers import get_scale
 from interval_extensions import NaturalExtension, CentredForm, BicentredForm
 from interval_differentiation import SympyGradientEvaluator, ForwardSlopeEvaluator
 from mp_exp import set_precision, Interval
-from optimization_methods import MooreSkelboe
+from optimization_methods import MooreSkelboe, GraphSplitting
 
-METHODS = {"moore_skelboe": MooreSkelboe}
+METHODS = {"moore_skelboe": MooreSkelboe,
+           "graph_splitting": GraphSplitting}
 EXTENSIONS = {"natural": NaturalExtension,
               "centred_form": CentredForm,
               "bicentred_form": BicentredForm}
@@ -38,7 +39,7 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval],
 
     Returns
     -------
-    point where maximum/minimum is reached
+    minimum value
     """
 
     calculation_scale = get_scale(precision)
