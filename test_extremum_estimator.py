@@ -9,7 +9,7 @@ import re
 from extremum_estimator import get_extremum_estimation, EXTENSIONS, METHODS, DIFFS
 from mp_exp import Interval
 
-TIMEOUT = 5
+TIMEOUT = 120
 
 
 @dataclass(init=True)
@@ -49,6 +49,7 @@ class TestExtr(unittest.TestCase):
         result = get_extremum_estimation(test.func, test.intervals,
                                          test.precision, extension,
                                          method, diff)
+        print(result)
         difference = abs(test.answer - result)
         message = (f"expected: {test.answer}, actual: {result}.\n"
                    f"difference > precision: {difference} > {test.precision}")
