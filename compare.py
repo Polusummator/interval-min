@@ -9,8 +9,12 @@ import matplotlib.pyplot as plt
 from extremum_estimator import get_extremum_estimation, EXTENSIONS, DIFFS
 from mp_exp import Interval
 
+
 TIMEOUT = 10
 amount = 20
+method = "moore_skelboe"
+
+
 values = []
 koefs = [str(i) for i in range(-100, 101)]
 degs = [i for i in range(0, 16)]
@@ -82,7 +86,6 @@ def generate(argzz):
 
 
 def do_it():
-    method = "moore_skelboe"
     index = 0
     for _ in range(amount):
         i = dict()
@@ -124,7 +127,10 @@ def collect_statistics():
             min_time[i] = min(min_time[i], x[i])
             middle[i][1] += x[i]
     for x in middle:
-        average.append(x[1] / x[0])
+        if x[0] == 0:
+            average.append(0)
+        else:
+            average.append(x[1] / x[0])
         failures.append(amount - x[0])
 
 
