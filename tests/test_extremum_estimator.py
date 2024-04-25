@@ -49,7 +49,6 @@ class TestExtr(unittest.TestCase):
         result = get_extremum_estimation(test.func, test.intervals,
                                          test.precision, extension,
                                          method, diff)
-        print(result)
         difference = abs(test.answer - result)
         message = (f"expected: {test.answer}, actual: {result}.\n"
                    f"difference > precision: {difference} > {test.precision}")

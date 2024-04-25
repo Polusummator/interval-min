@@ -8,8 +8,14 @@ from interval_differentiation import SympyGradientEvaluator, ForwardSlopeEvaluat
 from mp_exp import set_precision, Interval
 from optimization_methods import MooreSkelboe, GraphSplitting
 
+"""
+if you want too see how slow Graph Splitting and Simulated Annealing methods are, then try this:
 METHODS = {"moore_skelboe": MooreSkelboe,
-           "graph_splitting": GraphSplitting}
+           "graph_splitting": GraphSplitting,
+           "simulated_annealing": SimulatedAnnealing}
+else:
+"""
+METHODS = {"moore_skelboe": MooreSkelboe}
 EXTENSIONS = {"natural": NaturalExtension,
               "centred_form": CentredForm,
               "bicentred_form": BicentredForm}
