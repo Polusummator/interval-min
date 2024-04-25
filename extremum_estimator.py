@@ -6,15 +6,12 @@ from helpers import get_scale
 from interval_extensions import NaturalExtension, CentredForm, BicentredForm
 from interval_differentiation import SympyGradientEvaluator, ForwardSlopeEvaluator
 from mp_exp import set_precision, Interval
-from optimization_methods import MooreSkelboe, GraphSplitting
+from optimization_methods import MooreSkelboe, GraphSplitting, SimulatedAnnealing
 
-"""
-if you want too see how slow Graph Splitting and Simulated Annealing methods are, then try this:
-METHODS = {"moore_skelboe": MooreSkelboe,
-           "graph_splitting": GraphSplitting,
-           "simulated_annealing": SimulatedAnnealing}
-else:
-"""
+
+# METHODS = {"moore_skelboe": MooreSkelboe,
+#            "graph_splitting": GraphSplitting,
+#            "simulated_annealing": SimulatedAnnealing}
 METHODS = {"moore_skelboe": MooreSkelboe}
 EXTENSIONS = {"natural": NaturalExtension,
               "centred_form": CentredForm,
@@ -50,7 +47,6 @@ def get_extremum_estimation(func: str, func_args: dict[str, Interval],
 
     calculation_scale = get_scale(precision)
     set_precision(calculation_scale + 5)
-    #     TODO: Set a number of Taylor's series terms based on precision
 
     parsed_function = _parse_function(func)
     interval_extension = _parse_extension_type(extension)(parsed_function, func_args.keys(), DIFFS[diff])
