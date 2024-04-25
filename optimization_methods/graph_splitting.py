@@ -104,7 +104,6 @@ class GraphSplitting:
                 continue
             bc_status = self._box_consistency(domain, current_interval)
             if bc_status == 2:
-                print("yeah")
                 return 2
             if not bc_status:
                 continue
