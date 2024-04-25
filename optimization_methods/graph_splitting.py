@@ -6,7 +6,6 @@ from decimal import Decimal
 
 from dataclasses import dataclass
 from interval_differentiation.sympy_diffentiation import SympyGradientEvaluator
-from interval_extensions import NaturalExtension
 
 
 @dataclass(frozen=True)
@@ -24,7 +23,6 @@ class GraphSplitting:
         self.calculation_scale = get_scale(precision)
 
         self.gradient_calculator = SympyGradientEvaluator(func, func_args)
-        self.natural_extension = NaturalExtension(func, list(func_args))
 
         self.cells = SortedList(key=lambda x: x.lower_bound)
         self.bounds = interval_extension.evaluate(func_args)
@@ -100,12 +98,24 @@ class GraphSplitting:
                 current_interval = work_list.pop()
             skip_choosing_interval = False
             current_domain = real_domain | {self.muted_variable: current_interval}
+            # --- This can speed up the algorithm ---
+            phi_value = self._calculate_phi(real_domain, current_interval, bounds)
+            if not is_in(0, phi_value):
+                continue
+            bc_status = self._box_consistency(domain, current_interval)
+            if bc_status == 2:
+                print("yeah")
+                return 2
+            if not bc_status:
+                continue
+            # ---------------------------------------
             df_value = self.gradient_calculator.evaluate(current_domain)[self.muted_variable]
             if not is_in(0, df_value):
                 newton_interval = current_interval
                 need_procedure = False
                 while True:
-                    newton_intervals = self._newton_step(domain.copy(), newton_interval)
+                    newton_result = self._newton_step(domain.copy(), newton_interval)
+                    newton_intervals = [x[0] for x in newton_result]
                     if not newton_intervals:
                         newton_interval = None
                         break
@@ -144,7 +154,8 @@ class GraphSplitting:
                 expansion_point = status
             if not expansion_point:
                 expansion_point = current_interval.mid_interval
-            newton_intervals = self._newton_step(domain.copy(), current_interval, expansion_point)
+            newton_result = self._newton_step(domain.copy(), current_interval, expansion_point)
+            newton_intervals = [x[0] for x in newton_result]
             if not newton_intervals:
                 continue
             if len(newton_intervals) > 1:
@@ -168,6 +179,48 @@ class GraphSplitting:
             return 0
         return 1
 
+    def _box_consistency(self, domain, interval):
+        if self.has_answer:
+            return 2
+        beta = Decimal(1) / Decimal(4)
+        a = interval.a
+        b = interval.b
+        w0 = b - a
+        real_domain = domain.copy()
+        bounds = real_domain.pop(0)
+        while True:
+            phi_value = self._calculate_phi(real_domain, Interval.to_interval(a), bounds)
+            if is_in(0, phi_value):
+                return 1
+            w = b - a
+            c = a + beta * w
+            Y = Interval(a, c)
+            newton_result = self._newton_step(domain.copy(), Y, Interval.to_interval(a))
+            if not newton_result and beta == 1:
+                return 0
+            if newton_result and self._calculate_phi(real_domain, newton_result[0][0], bounds).wid <= self.answer_precision and beta == 1:
+                if not newton_result:
+                    return 0
+                return 1
+            if not newton_result and beta < 1:
+                a = c
+                beta = 2 * beta
+                continue
+            newton_interval = newton_result[0][1]
+            Y_ = newton_result[0][0]
+            if Y_.wid * 2 < Y.wid and beta == 1:
+                a = Y_.a
+                b = Y_.b
+                continue
+            if a < Y_.b < c:
+                return max(self._box_consistency(domain, newton_interval), self._box_consistency(domain, Interval(c, b)))
+            a = Y_.a
+            if (b - a) * 2 < w0:
+                beta = Decimal(1) / Decimal(4)
+                w0 = b - a
+                continue
+            return 1
+
     def _newton_step(self, domain, muted_interval, expansion_point=None):
         if expansion_point is None:
             expansion_point = muted_interval.mid_interval
@@ -185,13 +238,13 @@ class GraphSplitting:
                 if muted_interval.a.is_finite() and muted_interval.b.is_finite() and result and is_in(newton_interval, muted_interval):
                     self.has_answer = True
                 if result:
-                    intervals.append(result)
+                    intervals.append([result, newton_interval])
             else:
                 for interval in fraction:
                     newton_interval = expansion_point - interval
                     result = intersect(muted_interval, newton_interval)
                     if result:
-                        intervals.append(result)
+                        intervals.append([result, newton_interval])
         return intervals
 
     def _calculate_phi(self, domain, muted_interval, bounds):
@@ -214,7 +267,8 @@ class GraphSplitting:
                     if first_zero is None:
                         first_zero = Interval.to_interval(interval.a)
                 else:
-                    newton_intervals = self._newton_step(domain.copy(), interval, Interval.to_interval(interval.a))
+                    newton_result = self._newton_step(domain.copy(), interval, Interval.to_interval(interval.a))
+                    newton_intervals = [x[0] for x in newton_result]
                     if not newton_intervals:
                         interval = None
                         break
@@ -233,7 +287,8 @@ class GraphSplitting:
                     phi_value = self._calculate_phi(real_domain, expansion_point, bounds)
                     if is_in(0, phi_value) and first_zero is None:
                         first_zero = expansion_point
-                    newton_intervals = self._newton_step(domain.copy(), interval, expansion_point)
+                    newton_result = self._newton_step(domain.copy(), interval, expansion_point)
+                    newton_intervals = [x[0] for x in newton_result]
                     if not newton_intervals:
                         interval = None
                         break
@@ -244,7 +299,8 @@ class GraphSplitting:
             phi_value = self._calculate_phi(real_domain, interval.mid_interval, bounds)
             if is_in(0, phi_value) and not first_zero:
                 first_zero = interval.mid_interval
-            newton_intervals = self._newton_step(domain.copy(), interval)
+            newton_result = self._newton_step(domain.copy(), interval)
+            newton_intervals = [x[0] for x in newton_result]
             if not newton_intervals:
                 interval = None
                 break
