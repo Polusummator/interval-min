@@ -6,13 +6,12 @@ from helpers import get_scale
 from interval_extensions import NaturalExtension, CentredForm, BicentredForm
 from interval_differentiation import SympyGradientEvaluator, ForwardSlopeEvaluator
 from mp_exp import set_precision, Interval
-from optimization_methods import MooreSkelboe, GraphSplitting, SimulatedAnnealing
+from optimization_methods import MooreSkelboe, GraphSplitting, SimulatedAnnealing, MooreSkelboe_no_mods
 
-
-# METHODS = {"moore_skelboe": MooreSkelboe,
-#            "graph_splitting": GraphSplitting,
-#            "simulated_annealing": SimulatedAnnealing}
-METHODS = {"moore_skelboe": MooreSkelboe}
+METHODS = {"moore_skelboe": MooreSkelboe,
+           "moore_skelboe_no_mods": MooreSkelboe_no_mods,
+           "graph_splitting": GraphSplitting,
+           "simulated_annealing": SimulatedAnnealing}
 EXTENSIONS = {"natural": NaturalExtension,
               "centred_form": CentredForm,
               "bicentred_form": BicentredForm}
