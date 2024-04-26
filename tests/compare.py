@@ -124,7 +124,10 @@ def collect_statistics():
             min_time[i] = min(min_time[i], x[i])
             middle[i][1] += x[i]
     for x in middle:
-        average.append(x[1] / x[0])
+        if x[0] == 0:
+            average.append(0)
+        else:
+            average.append(x[1] / x[0])
         failures.append(amount - x[0])
 
 
